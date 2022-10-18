@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import "/node_modules/react-grid-layout/css/styles.css";
 import "/node_modules/react-resizable/css/styles.css";
-import GridLayout from "react-grid-layout";
-import PlotComponent from "../components/PlotComponent";
-import Nav from "../components/dashboard_speedial/Nav";
-import DashboardThemeBtn from "../components/DashboardThemeBtn";
-import DashboardTitle from "../components/DashboardTitle";
-import "../components/Dashboard.css";
-
+import { Responsive, WidthProvider } from "react-grid-layout"
+import PlotComponent from "./components/PlotComponent";
+import Nav from "./components/dashboard_speedial/Nav";
+import DashboardThemeBtn from "./components/DashboardThemeBtn";
+import DashboardTitle from "./components/DashboardTitle";
+import "./Dashboard.css";
+import layouts from "./layouts";
 /////////////////////////////////////////////
 // DASHBOARD CONTAINER FOR THE DASHBOARD PAGE
 /////////////////////////////////////////////
@@ -57,6 +57,9 @@ const editableFeatures = [
     ],
   },
 ];
+
+const ResponsiveGridLayout = WidthProvider(Responsive);
+
 
 /**
  * The Dashboard container is used to manipulate the data within the Dashboard page
@@ -156,13 +159,12 @@ const Dashboard = () => {
             backgroundColor: `${theme ? "#d6e4ea" : "#161d33"}`,
           }}
         >
-          <GridLayout
+          <ResponsiveGridLayout
             className="layout"
-            cols={24}
-            rowHeight={30}
-            width={2500}
+            layouts={layouts}
             onLayoutChange={(layout) => setDataGrid(layout)}
-            isDraggable={mode === "edit" ? true : false}
+            breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+            cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
           >
             {plotKeys.map((plotKey) => {
               return (
@@ -183,7 +185,7 @@ const Dashboard = () => {
                 />
               );
             })}
-          </GridLayout>
+          </ResponsiveGridLayout>
         </div>
       </div>
     </div>

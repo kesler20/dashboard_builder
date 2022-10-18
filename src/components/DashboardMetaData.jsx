@@ -52,37 +52,7 @@ export default class PlotlyInterface {
           size: 18,
           color: this.fontColor,
         },
-      },
-      // sliders: [
-      //   {
-      //     pad: { t: 30 },
-      //     currentvalue: {
-      //       xanchor: "right",
-      //       prefix: "color: ",
-      //       font: {
-      //         color: "#888",
-      //         size: 20,
-      //       },
-      //     },
-      //     steps: [
-      //       {
-      //         label: "red",
-      //         method: "restyle",
-      //         args: ["line.color", "red"],
-      //       },
-      //       {
-      //         label: "green",
-      //         method: "restyle",
-      //         args: ["line.color", "green"],
-      //       },
-      //       {
-      //         label: "blue",
-      //         method: "restyle",
-      //         args: ["line.color", "blue"],
-      //       },
-      //     ],
-      //   },
-      // ],
+      }
     };
     this.config = {
       responsive: true,

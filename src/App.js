@@ -1,14 +1,15 @@
-import Pages from "./pages/Pages";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Dashboard from "./Dashboard";
 
-function App() {
+const App = () => {
   return (
     <div className="App">
       <BrowserRouter>
-        <Pages />
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+        </Routes>
       </BrowserRouter>
     </div>
-
   );
 }
 
