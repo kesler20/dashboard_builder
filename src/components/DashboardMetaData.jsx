@@ -318,19 +318,20 @@ export class PlotLayout {
     };
 
     this.xaxis = {
-      title: this.xTicks,
-      showgrid: false,
+      title: "",
+      showgrid: true,
       autorange: true,
       gridwidth: 1,
-      zeroline: false,
-      tickangle: 60,
+      zeroline: true,
+      tickangle: 90,
       range: [],
       titlefont: {
         family: "Arial, sans-serif",
         size: 18,
-        color: this.fontColor,
+        color: "",
       },
     };
+    
     this.legend = {
       width: 500,
       height: 500,
