@@ -1,4 +1,5 @@
-// you can test those functions https://codepen.io/pen
+import Trace from "./Trace";
+import PlotLayout from "./PlotLayout";
 
 /**
  * This is an interface for the Plotly Library
@@ -63,26 +64,38 @@ export default class PlotlyInterface {
   // scatter, scatter3d, pie, bar, box, histogram, , contour, surface
   // mode includes : markers lines, lines+scatter
   // type scatter , mode lines
-  addLinePLot() {
+  addLinePLot(name, errorBounds, errorBars) {
     // add error bars option
     // add error bounds
     // add dotted line
-    return
+    const trace = new Trace("scatter", name);
+    trace.addLinePLot();
+    this.plotData.push(trace);
+    if (errorBounds) {
+      const lowerBound = new Trace("scatter", "lower bound");
+      const higherBound = new Trace("scatter", "higher bound");
+      lowerBound.addLinePlot();
+      higherBound.addLinePlot();
+      higherBound.addFillColor();
+      this.plotData = this.plotData.filter((trace) => trace.name === name);
+      this.plotData.push(higherBound);
+      this.plotData.push(lowerBound);
+      this.plotData.push(trace);
+    }
   }
 
   // type scatter , mode markers
   addScatterPlot() {
-    return
+    return;
   }
 
-  // type scatter 3d, mode markers 
-  add3DPlot() {
-  }
+  // type scatter 3d, mode markers
+  add3DPlot() {}
 
-  // type pie 
+  // type pie
   addPieChart() {
     // when multiple traces are added and they are both pie charts, stack them up into columns
-    return
+    return;
   }
 
   // type bar
@@ -107,7 +120,7 @@ export default class PlotlyInterface {
     // change orientation
     // stack them up
     // overlay them
-  } 
+  }
 
   // contour
   addContourPLot() {
@@ -116,12 +129,11 @@ export default class PlotlyInterface {
 
   // type histogram2dcontour
   addHistogram2DContour() {
-    return
+    return;
   }
 
   // surface
-  addSurfacePlot() {
-  }
+  addSurfacePlot() {}
 
   /**
    * Build a plot from scratch
@@ -169,339 +181,11 @@ export default class PlotlyInterface {
         },
       });
     }
-  }
+  };
 
   // unlike the update initial plot function the update plot will update the plot in place
   // this is suitable for none real time data updates
   updateStaticPlot() {
     return;
   }
-}
-
-// use the state design pattern to make the trace component
-
-export class Trace {
-  constructor(type, name) {
-    this.name = name;
-    this.type = type;
-    this.mode = "markers";
-    this.x = [];
-    this.y = [];
-    this.z = [];
-    this.showscale = true;
-  }
-
-  // a line plot comprise a mode of lines and a type of scatter, this can be edited from the line object
-
-  addDottedLine = (lineWidth) => {
-    this.line = {
-      dash: "dashdot",
-      width: lineWidth,
-    };
-    return this;
-  };
-
-  addMarker = (color, opacity, size, lineColor, lineWidth) => {
-    this.marker = {
-      color: color, // to make color change make it an array
-      opacity: opacity,
-      size: size, // can also be an array []
-      line: {
-        color: lineColor,
-        width: lineWidth,
-      },
-      symbol: "circle", // this can be other things but please don't
-    };
-    return this;
-  };
-
-  // size is an array
-  addRelativeSizeToMarkers = (size) => {
-    const desired_maximum_marker_size = 40;
-    this.marker = {
-      ...this.marker,
-      //set 'sizeref' to an 'ideal' size given by the formula sizeref = 2. * max(array_of_size_values) / (desired_maximum_marker_size ** 2)
-      size: size,
-      sizeref: (2.0 * Math.max(...size)) / desired_maximum_marker_size ** 2,
-      sizemode: "area",
-    };
-    return this;
-  };
-
-  // these can be a special type of scatter plots
-  addErrorBars = (direction, error_data) => {
-    let data = {
-      type: "data", // percent
-      visible: true,
-      type: "constant",
-      value: error_data, // this is a number be up to 10
-      color: "#85144B",
-      thickness: 1.5,
-      width: 3,
-      opacity: 1,
-    };
-    if (direction === "y") {
-      this.error_y = data;
-    } else {
-      this.error_x = data;
-    }
-
-    return this;
-  };
-
-  // pie chart methods
-
-  addValues = (values) => {
-    this.values = values;
-    return this;
-  };
-
-  addLabels = (labels) => {
-    this.labels = labels;
-    return this;
-  };
-
-  addDomain = (row, column) => {
-    this.domain = {
-      row: row,
-      column: column,
-    };
-    return this;
-  };
-
-  // box plot method
-
-  addOutlierDetection = () => {
-    // implement boxpoints of suspectedoutliers to display the outlier
-    this.marker = {
-      ...this.marker,
-      color: "rgb(8,81,156)",
-      outliercolor: "rgba(219, 64, 82, 0.6)",
-      line: {
-        outliercolor: "rgba(219, 64, 82, 1.0)",
-        outlierwidth: 2,
-      },
-    };
-    return this;
-  };
-
-  addUnderlyingData = () => {
-    this.boxpoints = "all"; // can also be false to only show the whiskers and suspectedoutliers to show the outliers
-    this.jitter = 0.3;
-    this.pointpos = -1.8;
-    return this;
-  };
-
-  // edit all of those when you select the addText method
-  // you can use a </br> tag to go to the next line
-  addText = () => {
-    this.text = [];
-    this.textposition = "auto";
-    this.textinfo = "none";
-    this.insidetextorientation = this.type === "pie" ? "radial" : ""; // this is good for the pie charts
-    return this;
-  };
-
-  addHoverInfo = () => {
-    this.hoverinfo = "label+percent+name"; // can also be set to "none";
-    return this;
-  };
-
-  removeLegend = () => {
-    this.showLegend = false;
-    return this;
-  };
-
-  changeColorScale = () => {
-    this.marker = {
-      ...this.marker,
-      colorscale: "Jet", // Hot accompaign the hot with a reverse scale of true
-    };
-    return this;
-  };
-
-  addCustomColorScale = () => {
-    this.colorscale = [
-      [0, "rgb(166,206,227)"],
-      [0.25, "rgb(31,120,180)"],
-      [0.45, "rgb(178,223,138)"],
-      [0.65, "rgb(51,160,44)"],
-      [0.85, "rgb(251,154,153)"],
-      [1, "rgb(227,26,28)"],
-    ];
-    return this;
-  };
-
-  // this is for adding a normal contour when you have type contours
-  addContours = () => {
-    this.contours = {
-      coloring: "heatmap", // this can also be lines to have lines as a contour
-      showlabels: true,
-      labelfont: {
-        family: "Raleway",
-        size: 12,
-        color: "white",
-      },
-    };
-    this.ncontours = 20;
-    return this;
-  };
-
-  // this works when the plot is of the type
-  // histogram2dcontour
-  // hover it requires an x and y axis
-  styleContours = () => {
-    this.colorscale = "Hot";
-    this.ncontours = 20;
-    this.reversescale = true;
-    return this;
-  };
-}
-
-export class PlotLayout {
-  constructor(textColor, paperColor, plotBgColor) {
-    this.title = "plot title";
-    this.showlegend = true;
-    this.font = { color: textColor, size: 18 };
-    this.paper_bgcolor = paperColor;
-    this.plot_bgcolor = plotBgColor;
-  }
-
-  addYaxis = (title, fontColor, gridColor) => {
-    this.yaxis = {
-      title: title,
-      gridcolor: gridColor,
-      titlefont: {
-        family: "Arial, sans-serif",
-        size: 18,
-        color: fontColor,
-      },
-      showline: true,
-      gridwidth: 1,
-      zerolinewidth: 2,
-      autorange: true,
-    };
-    return this;
-  };
-
-  addXaxis = (title, fontColor, gridColor) => {
-    this.xaxis = {
-      gridcolor: gridColor,
-      title: title,
-      showgrid: true,
-      autorange: true,
-      gridwidth: 1,
-      zeroline: true,
-      titlefont: {
-        family: "Arial, sans-serif",
-        size: 18,
-        color: fontColor,
-      },
-      showline: true,
-      zerolinewidth: 2,
-    };
-    return this;
-  };
-
-  addLogXScale = () => {
-    this.xaxis = {
-      ...this.xaxis,
-      type: "log",
-    };
-    return this;
-  };
-
-  addZAxis = (title) => {
-    this.scene = {
-      xaxis: { ...this.xaxis },
-      yaxis: { ...this.yaxis },
-      zaxis: { title: title },
-    };
-    this.autosize = false;
-    this.width = 550;
-    this.height = 500;
-    this.margin = {
-      l: 0,
-      r: 0,
-      b: 50,
-      t: 50,
-      pad: 4,
-    };
-    return this;
-  };
-
-  addLogYScale = () => {
-    this.yaxis = {
-      ...this.yaxis,
-      type: "log",
-    };
-    return this;
-  };
-
-  removeXGrid = () => {
-    this.xaxis = {
-      ...this.xaxis,
-      showgriid: false,
-    };
-    return this;
-  };
-
-  removeYGrid = () => {
-    this.yaxis = {
-      ...this.yaxis,
-      showgrid: false,
-    };
-    return this;
-  };
-
-  removeXZeroLine = () => {
-    this.xaxis = {
-      ...this.xaxis,
-      zeroline: false,
-    };
-    return this;
-  };
-
-  removeYZeroLine = () => {
-    this.yaxis = {
-      ...this.yaxis,
-      zeroline: false,
-    };
-    return this;
-  };
-
-  addLegend = () => {
-    this.legend = {
-      width: 500,
-      height: 500,
-      y: 0.5,
-      yref: "paper",
-      font: {
-        family: "Arial, sans-serif",
-        size: 20,
-        color: "black",
-      },
-    };
-    return this;
-  };
-
-  // barmode cna be stack or group
-  styleBarChart = (barmode) => {
-    // for bar charts
-    this.barmode = barmode;
-    this.bargap = 0.15;
-    this.bargroupgap = 0.1;
-    return this;
-  };
-
-  // barode cna e of overlay or stack
-  styleHistograms = (barmode) => {
-    this.barmode = barmode;
-    return this;
-  };
-
-  styleBoxPlot = () => {
-    this.boxmode = "group";
-    return this;
-  };
 }
