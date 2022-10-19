@@ -53,8 +53,13 @@ export default class TraceBuilder {
    * - pointcloud,
    * - sankey
    *
+   * the default trace that will be built is:
+   * ```javascript
+   * {
+   *   name : name,
+   *   type : type
+   * }
    * @param {*} type - this can be one from
-   *
    * @param {*} name - the name of the trace
    *
    * @returns this
@@ -62,10 +67,6 @@ export default class TraceBuilder {
   constructor(type, name) {
     this.name = name;
     this.type = type;
-    this.mode = "markers";
-    this.x = [];
-    this.y = [];
-    this.z = [];
   }
 
   /**
@@ -109,6 +110,37 @@ export default class TraceBuilder {
       width: "5",
     };
     return this;
+  };
+
+  /**
+   * add ``x : x``
+   * @param {*} x - this is an array
+   * @returns this
+   */
+  addXaxis = (x) => {
+    this.x = x;
+    return this;
+  };
+
+  /**
+   * add ``y : y``
+   * @param {*} y - this is an array
+   * @returns this
+   */
+  addYazis = () => {
+    this.y = y;
+    return this;
+  };
+
+  /**
+   * add ``z : z``
+   * for heatmaps contours and surfaces this can be an array of arrays
+   * @param {*} z - this is an array, or else can be an array of arrays
+   * @returns this
+   */
+  addZaxis = () => {
+    this.z = z;
+    return this.addBoxPoints;
   };
 
   /**

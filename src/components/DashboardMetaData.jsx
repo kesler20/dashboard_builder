@@ -1,5 +1,7 @@
 import Trace from "./Trace";
-import PlotLayout from "./PlotLayout";
+import PlotLayout from "./LayoutBuilder";
+import TraceBuilder from "./TraceBuilder";
+import LayoutBuilder from "./LayoutBuilder";
 
 /**
  * This is an interface for the Plotly Library
@@ -19,7 +21,7 @@ export default class PlotlyInterface {
 
     // this is a collection of traces
     this.plotData = [];
-    this.layout = new PlotLayout("scatter");
+    this.layout = {};
 
     this.config = {
       responsive: true,
@@ -34,24 +36,16 @@ export default class PlotlyInterface {
   }
 
   addTrace = (type, name) => {
-    let orientation = "h";
-    let trace = new Trace(type, name);
-    if (type === "box") {
-      if (orientation === "h") {
-      }
-      if (seeUnderlyingData) {
-        trace.addUnderlyingData();
-      }
-    }
+    const traceBuilder = new TraceBuilder(scatter, name);
+    traceBuilder.addMarker().addMode("markers");
+    const trace = traceBuilder.buildTrace();
     this.plotData.push(trace);
-    return this;
   };
 
-  addPlotTitle = (title) => {
-    this.layout.title = title;
-    return this;
-  };
-
+  addTitle = () => {
+    const layoutBuilder = new LayoutBuilder()
+    layoutBuilder.add
+  }
   addDimension = (axis, data, label, traceID) => {
     const trace = this.plotData[traceID];
     if (axis === "x") {
