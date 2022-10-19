@@ -173,7 +173,9 @@ export default class PlotlyInterface {
 
   // unlike the update initial plot function the update plot will update the plot in place
   // this is suitable for none real time data updates
-  updatePlot() {}
+  updateStaticPlot() {
+    return;
+  }
 }
 
 // use the state design pattern to make the trace component
@@ -196,6 +198,7 @@ export class Trace {
       dash: "dashdot",
       width: lineWidth,
     };
+    return this;
   };
 
   addMarker = (color, opacity, size, lineColor, lineWidth) => {
@@ -356,40 +359,118 @@ export class Trace {
 }
 
 export class PlotLayout {
-  constructor(type) {
+  constructor(textColor, paperColor, plotBgColor) {
     this.title = "plot title";
     this.showlegend = true;
-    this.font = { color: "", size: 18 };
-    this.paper_bgcolor = "";
-    this.plot_bgcolor = "";
+    this.font = { color: textColor, size: 18 };
+    this.paper_bgcolor = paperColor;
+    this.plot_bgcolor = plotBgColor;
+  }
+
+  addYaxis = (title, fontColor, gridColor) => {
     this.yaxis = {
-      title: "",
-      gridcolor: "",
+      title: title,
+      gridcolor: gridColor,
       titlefont: {
         family: "Arial, sans-serif",
         size: 18,
-        color: "",
+        color: fontColor,
       },
       showline: true,
-      zerolinecolor: "",
+      gridwidth: 1,
       zerolinewidth: 2,
+      autorange: true,
     };
+    return this;
+  };
 
+  addXaxis = (title, fontColor, gridColor) => {
     this.xaxis = {
-      title: "",
+      gridcolor: gridColor,
+      title: title,
       showgrid: true,
       autorange: true,
       gridwidth: 1,
       zeroline: true,
-      tickangle: 90,
-      range: [],
       titlefont: {
         family: "Arial, sans-serif",
         size: 18,
-        color: "",
+        color: fontColor,
       },
+      showline: true,
+      zerolinewidth: 2,
     };
-    
+    return this;
+  };
+
+  addLogXScale = () => {
+    this.xaxis = {
+      ...this.xaxis,
+      type: "log",
+    };
+    return this;
+  };
+
+  addZAxis = (title) => {
+    this.scene = {
+      xaxis: { ...this.xaxis },
+      yaxis: { ...this.yaxis },
+      zaxis: { title: title },
+    };
+    this.autosize = false;
+    this.width = 550;
+    this.height = 500;
+    this.margin = {
+      l: 0,
+      r: 0,
+      b: 50,
+      t: 50,
+      pad: 4,
+    };
+    return this;
+  };
+
+  addLogYScale = () => {
+    this.yaxis = {
+      ...this.yaxis,
+      type: "log",
+    };
+    return this;
+  };
+
+  removeXGrid = () => {
+    this.xaxis = {
+      ...this.xaxis,
+      showgriid: false,
+    };
+    return this;
+  };
+
+  removeYGrid = () => {
+    this.yaxis = {
+      ...this.yaxis,
+      showgrid: false,
+    };
+    return this;
+  };
+
+  removeXZeroLine = () => {
+    this.xaxis = {
+      ...this.xaxis,
+      zeroline: false,
+    };
+    return this;
+  };
+
+  removeYZeroLine = () => {
+    this.yaxis = {
+      ...this.yaxis,
+      zeroline: false,
+    };
+    return this;
+  };
+
+  addLegend = () => {
     this.legend = {
       width: 500,
       height: 500,
@@ -398,18 +479,29 @@ export class PlotLayout {
       font: {
         family: "Arial, sans-serif",
         size: 20,
-        color: "grey",
+        color: "black",
       },
     };
+    return this;
+  };
 
+  // barmode cna be stack or group
+  styleBarChart = (barmode) => {
     // for bar charts
-    this.barmode = "stack"; // group, for histograms you can use barmode of stack or overlay
+    this.barmode = barmode;
     this.bargap = 0.15;
     this.bargroupgap = 0.1;
+    return this;
+  };
 
-    //box plots
-    this.layout = {
-      boxmode: group,
-    };
-  }
+  // barode cna e of overlay or stack
+  styleHistograms = (barmode) => {
+    this.barmode = barmode;
+    return this;
+  };
+
+  styleBoxPlot = () => {
+    this.boxmode = "group";
+    return this;
+  };
 }
