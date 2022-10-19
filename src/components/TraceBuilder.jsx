@@ -113,34 +113,23 @@ export default class TraceBuilder {
   };
 
   /**
-   * add ``x : x``
-   * @param {*} x - this is an array
-   * @returns this
-   */
-  addXaxis = (x) => {
-    this.x = x;
-    return this;
-  };
-
-  /**
-   * add ``y : y``
-   * @param {*} y - this is an array
-   * @returns this
-   */
-  addYazis = () => {
-    this.y = y;
-    return this;
-  };
-
-  /**
-   * add ``z : z``
+   * if y add ``y : y``
+   * if x add ``x : x``
+   * if z add ``z : z``
    * for heatmaps contours and surfaces this can be an array of arrays
-   * @param {*} z - this is an array, or else can be an array of arrays
+   * @param {*} axis - this is the desired axes as a string
+   * @param {*} axisData - this is an array, or else can be an array of arrays
    * @returns this
    */
-  addZaxis = () => {
-    this.z = z;
-    return this.addBoxPoints;
+  addAxis = (axis, axisData) => {
+    if (axis === "z") {
+      this.z = axisData;
+    } else if (axis === "y") {
+      this.y = axisData;
+    } else {
+      this.x = axisData;
+    }
+    return this;
   };
 
   /**
@@ -439,15 +428,28 @@ export default class TraceBuilder {
   };
 
   /**
+   * this can be used when an existing trace has to be extended
+   * @param {*} trace - this is an existing trace object
+   * @returns
+   */
+  addTraceData = (trace) => {
+    let traceKeys = Object.key(trace);
+    traceKeys.forEach((k) => {
+      this[`${k}`] = trace[`${k}`];
+    });
+    return this;
+  };
+
+  /**
    * This function should be called at the end of the build to instatiate the final trace
    * ```javascript
    * const trace = traceBuilder.buildTrace()
    * ```
    * @returns this;
    */
-  buildTrace() {
+  buildTrace = () => {
     return this;
-  }
+  };
 }
 
 // TODO: make a defualt lineWidth variable which the user will be able to change

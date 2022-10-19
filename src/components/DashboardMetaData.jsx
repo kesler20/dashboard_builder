@@ -36,22 +36,27 @@ export default class PlotlyInterface {
   }
 
   addTrace = (type, name) => {
-    const traceBuilder = new TraceBuilder(scatter, name);
+    const traceBuilder = new TraceBuilder(type, name);
     traceBuilder.addMarker().addMode("markers");
     const trace = traceBuilder.buildTrace();
     this.plotData.push(trace);
   };
 
-  addTitle = () => {
-    const layoutBuilder = new LayoutBuilder()
-    layoutBuilder.add
-  }
+  addTitle = (title) => {
+    const layoutBuilder = new LayoutBuilder(title);
+    this.layout = layoutBuilder.buildLayout();
+  };
+
   addDimension = (axis, data, label, traceID) => {
-    const trace = this.plotData[traceID];
-    if (axis === "x") {
-      this.trace.x = data;
-      this.layout.xaxis.title = label;
-    }
+    // get the desired trace to that dimensions to
+    let trace = this.plotData[traceID]
+
+    // initialise a builder for trace and layout and pass it the current data
+    const traceBuilder = new TraceBuilder("")
+    const layoutBuilder = new LayoutBuilder("")
+
+    traceBuilder.addTraceData(trace).addAxis(axis,data)
+    layoutBuilder.addLayoutData(this.layout).addAxis(label,axis)
   };
 
   // similar to contours and heatmaps, surfaces accept an array of arrays as a z axis

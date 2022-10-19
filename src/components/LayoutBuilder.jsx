@@ -109,12 +109,12 @@ export default class LayoutBuilder {
   };
 
   /**
-   * this will add the label to the desired axis 
+   * this will add the label to the desired axis
    * @param {*} title - this is the name of the axis
    * @param {*} axis - this is the selected axis
    * @returns this
    */
-  addAxis = (title, axis) => {
+  addAxis = (axis, title) => {
     this.updateAxis(axis, "title", title);
     return this;
   };
@@ -232,6 +232,18 @@ export default class LayoutBuilder {
   styleBoxPlot = () => {
     this.boxmode = "group";
     return this;
+  };
+
+  /**
+   * this can be used when an existing layout has to be extended
+   * @param {*} layout - this is an existing layout object
+   * @returns
+   */
+  addLayoutData = (layout) => {
+    let layoutKeys = Object.key(layout);
+    layoutKeys.forEach((k) => {
+      this[`${k}`] = layout[`${k}`];
+    });
   };
 
   /**
