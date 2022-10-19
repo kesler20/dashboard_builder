@@ -37,7 +37,6 @@ export default class PlotlyInterface {
     let trace = new Trace(type, name);
     if (type === "box") {
       if (orientation === "h") {
-        // orientation h -> x otherwise y
       }
       if (seeUnderlyingData) {
         trace.addUnderlyingData();
@@ -61,9 +60,68 @@ export default class PlotlyInterface {
   };
 
   // similar to contours and heatmaps, surfaces accept an array of arrays as a z axis
-  // scatter, scatter3d, pie, bar, box, histogram, histogram2dcontour, contour, surface
+  // scatter, scatter3d, pie, bar, box, histogram, , contour, surface
   // mode includes : markers lines, lines+scatter
-  changePlotType = () => {};
+  // type scatter , mode lines
+  addLinePLot() {
+    // add error bars option
+    // add error bounds
+    // add dotted line
+    return
+  }
+
+  // type scatter , mode markers
+  addScatterPlot() {
+    return
+  }
+
+  // type scatter 3d, mode markers 
+  add3DPlot() {
+  }
+
+  // type pie 
+  addPieChart() {
+    // when multiple traces are added and they are both pie charts, stack them up into columns
+    return
+  }
+
+  // type bar
+  addBarChart() {
+    // add group bars
+    // by adding
+    // barmode: 'group',
+    // bargap: 0.15,
+    // bargroupgap: 0.1
+    // stack them up
+    // change orientation
+  }
+
+  // type box
+  addBoxPLot() {
+    // add outlier detection this will include a wiskers only plot and an outlier plot with the same data
+    // change orientation
+  }
+
+  // histogram
+  addHistogram() {
+    // change orientation
+    // stack them up
+    // overlay them
+  } 
+
+  // contour
+  addContourPLot() {
+    // add contour lines
+  }
+
+  // type histogram2dcontour
+  addHistogram2DContour() {
+    return
+  }
+
+  // surface
+  addSurfacePlot() {
+  }
 
   /**
    * Build a plot from scratch
@@ -84,7 +142,7 @@ export default class PlotlyInterface {
    * @param newDataY - this is an array of arrays containing the last y value of each trace
    * @param newDataX - this is an array of arrays containing the last x value of each trace
    */
-  updateInitialPlot(newDataY, newDataX) {
+  updateInitialPlot = (newDataY, newDataX) => {
     const traceIDs = [];
     for (let i = 0; i < newDataY.length; i++) {
       traceIDs.push(i);
