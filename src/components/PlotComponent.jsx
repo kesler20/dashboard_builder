@@ -41,16 +41,18 @@ const PlotComponent = forwardRef(
 
     */
     useEffect(() => {
-      
       const plotly = new PlotlyInterface(`plot-${props.plotID}`);
-      plotly.addTrace("histogram2dcontour", "test trace");
-      plotly.addDimension("y", [0,1,2,3,4,5,6,7,8,9], "space", 0);
-      plotly.addDimension("x", [0,1,2,3,4,5,6,7,8,9], "space", 0);
-      
-      plotly.addTrace("histogram", "test");
-      plotly.addDimension("x", [0,1,2,3,4,5,6,7,8,9], "space", 1);
+      plotly.addPlotTitle("This is a test plot");
+      plotly.addTrace("scatter3d", "test trace 2");
 
-      
+      plotly.addAxisDimension("y", [0, 1, 3, 3, 3, 5, 6, 2, 8, 9], "space", 0);
+      plotly.addAxisDimension("x", [1, 1, 2, 3, 4, 5, 6, 7, 8, 9], "space", 0);
+      plotly.addAxisDimension("z", [1, 1, 2, 3, 4, 5, 6, 7, 8, 9], "space", 0);
+      plotly.addScatterPlot(0);
+      plotly.addColorDimension([0, 1, 3, 3, 3, 5, 6, 2, 8, 9], 0);
+      plotly.addSizeDimension([0, 1, 3, 3, 3, 5, 6, 2, 8, 9], 0);
+
+      console.log(plotly.plotData)
       plotly.constructInitialPlot();
     });
 
@@ -117,6 +119,7 @@ const PlotComponent = forwardRef(
                     handleFeatureOptionSelection(selection)
                   }
                 />
+                <p className="color-text">Color</p>
                 {props.children[1]}
               </React.Fragment>
             }
@@ -136,4 +139,5 @@ const PlotComponent = forwardRef(
 
 export default PlotComponent;
 
+// TODO: on hover add the text that says what the variables are if there is color and size 
 //TODO: remove all this many props and make sure that there is no state for the components

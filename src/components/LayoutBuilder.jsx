@@ -28,7 +28,6 @@ export default class LayoutBuilder {
     this.layout["scene"] =
       this.layout.scene === undefined ? { zaxis: [] } : this.layout.scene;
 
-    console.log(this.layout.scene);
     if (axis === "y") {
       this.layout["yaxis"][`${key}`] = value;
     } else if (axis === "x") {
@@ -151,10 +150,10 @@ export default class LayoutBuilder {
       ...this.layout,
       autosize: true,
       margin: {
-        l: 65,
-        r: 50,
-        b: 65,
-        t: 90,
+        l: 0,
+        r: 0,
+        b: 30,
+        t: 0,
       },
     };
     return this;

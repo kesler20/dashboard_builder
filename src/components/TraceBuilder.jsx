@@ -72,7 +72,7 @@ export default class TraceBuilder {
 
   /**
    * add the property of mode to the trace, the default is markers
-   * @param {*} mode - this.trace can be "lines" "lines+markers" or "markers"
+   * @param {*} mode - this can be "lines" "lines+markers" or "markers"
    * @returns this
    */
   addMode = (mode) => {
@@ -82,7 +82,7 @@ export default class TraceBuilder {
 
   /**
    * add property fill ``fill : mode``
-   * @param {*} mode - this.trace can be tonexity/ tozeroy
+   * @param {*} mode - this can be tonexity/ tozeroy
    * @returns this
    */
   addFill = (fillType) => {
@@ -118,8 +118,8 @@ export default class TraceBuilder {
    * if x add ``x : x``
    * if z add ``z : z``
    * for heatmaps contours and surfaces this.trace can be an array of arrays
-   * @param {*} axis - this.trace is the desired axes as a string
-   * @param {*} axisData - this.trace is an array, or else can be an array of arrays
+   * @param {*} axis - this is the desired axes as a string
+   * @param {*} axisData - this is an array, or else can be an array of arrays
    * @returns this
    */
   addAxis = (axis, axisData) => {
@@ -190,7 +190,7 @@ export default class TraceBuilder {
    * @returns this
    */
   addColorScale = () => {
-    this.trace.showscale = true;
+    this.trace.marker.showscale = true;
     return this;
   };
 
@@ -202,26 +202,28 @@ export default class TraceBuilder {
    *   symbol : "circle"
    * }
    * ```
-   * @param {*} symbol - this.trace can be a circle, square, triangle etc..
+   * @param {*} symbol - this can be a circle, square, triangle etc..
    * @returns this
    */
   addMarker = (symbol) => {
+    symbol = symbol === undefined ? "circle" : symbol;
     this.trace.marker = {
       opacity: 0.8,
-      symbol: "circle",
-    };
+      symbol,
+      };
     return this;
   };
 
   /**
    * this.trace is used to resize the markers
-   * @param {*} size - this.trace is an array of sizes
+   * @param {*} size - this is an array of sizes
    * @returns this
    */
   addRelativeSizeToMarkers = (size) => {
-    const desired_maximum_marker_size = 40;
+    const desired_maximum_marker_size = 65;
     this.trace.marker = {
       ...this.trace.marker,
+      opacity : 0.6,
       size,
       sizeref: (2.0 * Math.max(...size)) / desired_maximum_marker_size ** 2,
       sizemode: "area",
@@ -231,10 +233,10 @@ export default class TraceBuilder {
 
   /**
    * this.trace can be used for scatter and line plots
-   * @param {*} type - this.trace can be "percent", "data"
-   * @param {*} direction - this.trace cna be x or y and this.trace sets the direction
+   * @param {*} type - this can be "percent", "data"
+   * @param {*} direction - this cna be x or y and this.trace sets the direction
    * of the error bar to be horizontal or vertical
-   * @param {*} value - this.trace is a number which goes from 1 to 10, preferably set at 5
+   * @param {*} value - this is a number which goes from 1 to 10, preferably set at 5
    * @returns this
    */
   addErrorBars = (type, direction, value) => {
@@ -259,7 +261,7 @@ export default class TraceBuilder {
 
   /**
    * this.trace can be usd for pie charts and sunbursts diagrams
-   * @param {*} values - this.trace is an array of numbers
+   * @param {*} values - this is an array of numbers
    * @returns this
    */
   addValues = (values) => {
@@ -269,7 +271,7 @@ export default class TraceBuilder {
 
   /**
    * this.trace can be used for pie charts
-   * @param {*} labels - this.trace is an array of strings.
+   * @param {*} labels - this is an array of strings.
    * @returns this
    */
   addLabels = (labels) => {
@@ -280,8 +282,8 @@ export default class TraceBuilder {
   /**
    * this.trace cna be used for organizing multiple pie
    * charts into rows and columns
-   * @param {*} row - this.trace is a number such as 0 or 1
-   * @param {*} column - this.trace is a number such as 0 or 1
+   * @param {*} row - this is a number such as 0 or 1
+   * @param {*} column - this is a number such as 0 or 1
    * @returns this
    */
   addDomain = (row, column) => {
@@ -323,10 +325,10 @@ export default class TraceBuilder {
   /**
    * Boxpoints determines the type of underlying data with the box plot
    *
-   *  - boxpoints to "all" - this.trace is used to display all the underlying data
-   *  - boxpoints to false - this.trace is used to only display the whiskers
-   *  - boxpoints to "suspectedoutliers" - this.trace is used to only display the outlier
-   * @param {*} boxpoints - this.trace cna be suspectedoutliers, false or all
+   *  - boxpoints to "all" - this is used to display all the underlying data
+   *  - boxpoints to false - this is used to only display the whiskers
+   *  - boxpoints to "suspectedoutliers" - this is used to only display the outlier
+   * @param {*} boxpoints - this cna be suspectedoutliers, false or all
    * @returns this
    */
   addBoxPoints = (boxpoints) => {
@@ -336,7 +338,7 @@ export default class TraceBuilder {
 
   /**
    * this.trace is the text displayed on hover
-   * @param {*} text - this.trace is an array of strings, you cna break into the next line by using the </br> tag
+   * @param {*} text - this is an array of strings, you cna break into the next line by using the </br> tag
    * @returns this
    */
   addText = (text) => {
@@ -368,9 +370,27 @@ export default class TraceBuilder {
   };
 
   /**
+   * this will add an extra dimension to your scatter plot by adding a color to your marker
+   * ```javascript
+   * marker : {
+   *   color : [color]
+   * }
+   * ```
+   * @param {*} color - this is an array which can be used as an extra dimension
+   * @returns this
+   */
+  addColor = (color) => {
+    this.trace.marker = {
+      ...this.trace.marker,
+      color,
+    };
+    return this; 
+  };
+
+  /**
    * this.trace can be used to style the colour scale of a colour gradient which cna be introduced by
    * creating a marker with a colour array corresponding to the desired data
-   * @param {*} colorscale - this.trace can be "Jet", "Hot", "Viridis"
+   * @param {*} colorscale - this can be "Jet", "Hot", "Viridis"
    * @returns this
    */
   changeColorScale = (colorscale) => {
@@ -399,8 +419,8 @@ export default class TraceBuilder {
 
   /**
    * this.trace is for adding a normal contour when you have type contours
-   * @param {*} coloring - this.trace can be heating or lines for the contours
-   * @param {*} showlabels - this.trace is a boolean whicch dictates whether to show the labels on the contour
+   * @param {*} coloring - this can be heating or lines for the contours
+   * @param {*} showlabels - this is a boolean whicch dictates whether to show the labels on the contour
    * @returns this
    */
   addContours = (coloring, showlabels) => {
@@ -431,13 +451,12 @@ export default class TraceBuilder {
 
   /**
    * this.trace can be used when an existing trace has to be extended
-   * @param {*} trace - this.trace is an existing trace object
+   * @param {*} trace - this is an existing trace object
    * @returns this
    */
   addTraceData = (trace) => {
     this.trace = trace;
-    console.log("this is the trace",this.trace)
-    return this
+    return this;
   };
 
   /**

@@ -33,6 +33,7 @@ export default class PlotlyInterface {
     };
   }
 
+  // the trace removal function should keep the traceIDs as they are
   addTrace(type, name) {
     const traceBuilder = new TraceBuilder(type, name);
     traceBuilder.addMarker().addMode("markers");
@@ -45,14 +46,14 @@ export default class PlotlyInterface {
     this.layout = layoutBuilder.buildLayout();
   }
 
-  addDimension(axis, data, label, traceID) {
-    // get the desired trace to that dimensions to
+  addAxisDimension(axis, data, label, traceID) {
+    // get the desired trace to add dimensions to
     let trace = this.plotData[traceID];
 
     // initialise a builder for trace and layout and pass it the current data
     // then add the axis, data and the label
-    const traceBuilder = new TraceBuilder("");
-    const layoutBuilder = new LayoutBuilder("");
+    const traceBuilder = new TraceBuilder();
+    const layoutBuilder = new LayoutBuilder();
     traceBuilder.addTraceData(trace).addAxis(axis, data);
     layoutBuilder.addLayoutData(this.layout).addAxis(axis, label);
 
@@ -61,22 +62,46 @@ export default class PlotlyInterface {
       this.config.scrollZoom = true;
       layoutBuilder.add3DStyles();
     }
-    
+
     this.layout = layoutBuilder.buildLayout();
   }
 
-  addLinePlot() {
-    return;
+  addColorDimension(data, traceID) {
+    // assuming that the marker has already being created,
+    // and so make sure that no marker has been created after
+    let trace = this.plotData[traceID];
+
+    const traceBuilder = new TraceBuilder();
+    traceBuilder
+      .addTraceData(trace)
+      .addColor(data)
+      .addColorScale()
+      .changeColorScale("Jet");
   }
 
-  // type scatter , mode markers
-  addScatterPlot() {
-    return;
+  addSizeDimension(data, traceID) {
+    // assuming that the marker has already being created,
+    // and so make sure that no marker has been created after
+    let trace = this.plotData[traceID];
+
+    let traceBuilder = new TraceBuilder();
+    traceBuilder.addTraceData(trace).addRelativeSizeToMarkers(data);
   }
 
-  // type scatter 3d, mode markers
-  add3DPlot() {
-    return;
+  addLinePlot(traceID) {
+    // get the desired trace
+    let trace = this.plotData[traceID];
+
+    const traceBuilder = new TraceBuilder("scatter");
+    traceBuilder.addTraceData(trace).addLine().addMode("lines");
+  }
+
+  addScatterPlot(traceID) {
+    // get the desired trace
+    let trace = this.plotData[traceID];
+
+    const traceBuilder = new TraceBuilder("scatter");
+    traceBuilder.addTraceData(trace).addMode("markers").addMarker("circle");
   }
 
   // type pie
