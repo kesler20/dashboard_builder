@@ -1,5 +1,3 @@
-import Trace from "./Trace";
-import PlotLayout from "./LayoutBuilder";
 import TraceBuilder from "./TraceBuilder";
 import LayoutBuilder from "./LayoutBuilder";
 
@@ -35,52 +33,40 @@ export default class PlotlyInterface {
     };
   }
 
-  addTrace = (type, name) => {
+  addTrace(type, name) {
     const traceBuilder = new TraceBuilder(type, name);
     traceBuilder.addMarker().addMode("markers");
     const trace = traceBuilder.buildTrace();
     this.plotData.push(trace);
-  };
+  }
 
-  addTitle = (title) => {
+  addPlotTitle(title) {
     const layoutBuilder = new LayoutBuilder(title);
     this.layout = layoutBuilder.buildLayout();
-  };
+  }
 
-  addDimension = (axis, data, label, traceID) => {
+  addDimension(axis, data, label, traceID) {
     // get the desired trace to that dimensions to
-    let trace = this.plotData[traceID]
+    let trace = this.plotData[traceID];
 
     // initialise a builder for trace and layout and pass it the current data
-    const traceBuilder = new TraceBuilder("")
-    const layoutBuilder = new LayoutBuilder("")
+    // then add the axis, data and the label
+    const traceBuilder = new TraceBuilder("");
+    const layoutBuilder = new LayoutBuilder("");
+    traceBuilder.addTraceData(trace).addAxis(axis, data);
+    layoutBuilder.addLayoutData(this.layout).addAxis(axis, label);
 
-    traceBuilder.addTraceData(trace).addAxis(axis,data)
-    layoutBuilder.addLayoutData(this.layout).addAxis(label,axis)
-  };
-
-  // similar to contours and heatmaps, surfaces accept an array of arrays as a z axis
-  // scatter, scatter3d, pie, bar, box, histogram, , contour, surface
-  // mode includes : markers lines, lines+scatter
-  // type scatter , mode lines
-  addLinePLot(name, errorBounds, errorBars) {
-    // add error bars option
-    // add error bounds
-    // add dotted line
-    const trace = new Trace("scatter", name);
-    trace.addLinePLot();
-    this.plotData.push(trace);
-    if (errorBounds) {
-      const lowerBound = new Trace("scatter", "lower bound");
-      const higherBound = new Trace("scatter", "higher bound");
-      lowerBound.addLinePlot();
-      higherBound.addLinePlot();
-      higherBound.addFillColor();
-      this.plotData = this.plotData.filter((trace) => trace.name === name);
-      this.plotData.push(higherBound);
-      this.plotData.push(lowerBound);
-      this.plotData.push(trace);
+    // style the layout in case of a 3d plot
+    if (axis === "z") {
+      this.config.scrollZoom = true;
+      layoutBuilder.add3DStyles();
     }
+    
+    this.layout = layoutBuilder.buildLayout();
+  }
+
+  addLinePlot() {
+    return;
   }
 
   // type scatter , mode markers
@@ -89,42 +75,26 @@ export default class PlotlyInterface {
   }
 
   // type scatter 3d, mode markers
-  add3DPlot() {}
+  add3DPlot() {
+    return;
+  }
 
   // type pie
   addPieChart() {
-    // when multiple traces are added and they are both pie charts, stack them up into columns
     return;
   }
 
   // type bar
-  addBarChart() {
-    // add group bars
-    // by adding
-    // barmode: 'group',
-    // bargap: 0.15,
-    // bargroupgap: 0.1
-    // stack them up
-    // change orientation
-  }
+  addBarChart() {}
 
   // type box
-  addBoxPLot() {
-    // add outlier detection this will include a wiskers only plot and an outlier plot with the same data
-    // change orientation
-  }
+  addBoxPLot() {}
 
   // histogram
-  addHistogram() {
-    // change orientation
-    // stack them up
-    // overlay them
-  }
+  addHistogram() {}
 
   // contour
-  addContourPLot() {
-    // add contour lines
-  }
+  addContourPLot() {}
 
   // type histogram2dcontour
   addHistogram2DContour() {
@@ -153,7 +123,7 @@ export default class PlotlyInterface {
    * @param newDataY - this is an array of arrays containing the last y value of each trace
    * @param newDataX - this is an array of arrays containing the last x value of each trace
    */
-  updateInitialPlot = (newDataY, newDataX) => {
+  updateInitialPlot(newDataY, newDataX) {
     const traceIDs = [];
     for (let i = 0; i < newDataY.length; i++) {
       traceIDs.push(i);
@@ -180,7 +150,7 @@ export default class PlotlyInterface {
         },
       });
     }
-  };
+  }
 
   // unlike the update initial plot function the update plot will update the plot in place
   // this is suitable for none real time data updates

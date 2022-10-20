@@ -41,17 +41,17 @@ const PlotComponent = forwardRef(
 
     */
     useEffect(() => {
-      const plotly = new PlotlyInterface(`plot-${props.plotID}`, window.Plotly);
-      let trace1 = plotly.createPlotData(
-        plotInfo.x,
-        plotInfo.y,
-        plotInfo.plotType,
-        "markers",
-        "circle",
-        false
-      );
-      let _ = plotTheme === "" ? null : plotly.changeLayout(plotTheme,"","","") 
-      plotly.constructInitialPlot([trace1]);
+      
+      const plotly = new PlotlyInterface(`plot-${props.plotID}`);
+      plotly.addTrace("histogram2dcontour", "test trace");
+      plotly.addDimension("y", [0,1,2,3,4,5,6,7,8,9], "space", 0);
+      plotly.addDimension("x", [0,1,2,3,4,5,6,7,8,9], "space", 0);
+      
+      plotly.addTrace("histogram", "test");
+      plotly.addDimension("x", [0,1,2,3,4,5,6,7,8,9], "space", 1);
+
+      
+      plotly.constructInitialPlot();
     });
 
     const handleFeatureOptionSelection = (selection) => {
@@ -61,54 +61,73 @@ const PlotComponent = forwardRef(
         );
         setPlotInfo(
           selectedFile.map((file) => {
-            return { x: file.data.x, y: file.data.y, plotType: plotInfo.plotType };
+            return {
+              x: file.data.x,
+              y: file.data.y,
+              plotType: plotInfo.plotType,
+            };
           })[0]
         );
         console.log(
           selectedFile.map((file) => {
-            return { x: file.data.x, y: file.data.y, plotType: plotInfo.plotType };
+            return {
+              x: file.data.x,
+              y: file.data.y,
+              plotType: plotInfo.plotType,
+            };
           })[0]
         );
       } else if (selectedPlotFeature.name === "Select a Plot") {
         if (selection === "BarChart") {
-          setPlotInfo({ x: plotInfo.x, y: plotInfo.y, plotType: "bar"})        
+          setPlotInfo({ x: plotInfo.x, y: plotInfo.y, plotType: "bar" });
         } else if (selection === "Pie Chart") {
-          setPlotInfo({ x: plotInfo.x, y: plotInfo.y, plotType: "pie"})        
+          setPlotInfo({ x: plotInfo.x, y: plotInfo.y, plotType: "pie" });
         } else if (selection === "Heatmap") {
-          setPlotInfo({ x: plotInfo.x, y: plotInfo.y, plotType: "heatmap"})        
+          setPlotInfo({ x: plotInfo.x, y: plotInfo.y, plotType: "heatmap" });
         } else if (selection === "3D Plot") {
-          setPlotInfo({ x: plotInfo.x, y: plotInfo.y, plotType: "scatter3d"})        
+          setPlotInfo({ x: plotInfo.x, y: plotInfo.y, plotType: "scatter3d" });
         } else {
-          console.log(selection)
+          console.log(selection);
         }
       } else if (selectedPlotFeature.name === "Select a Theme") {
-        setPlotTheme(selection)
+        setPlotTheme(selection);
       }
     };
 
     return (
-      <div
-        style={{ ...style }}
-        className={className}
-        ref={ref}
-        id={`plot-${props.plotID}`}
-        {...props}
-      >
+      <div>
         {viewMode === "edit" ? (
-          <React.Fragment>
-            <PlotCommandLine
-              plotMetaData={plotMetaData}
-              onFeatureSelected={(selection) => onFeatureSelected(selection)}
-              onDeleteBtnClicked={() => onRemoveBtnClicked(props.plotID)}
-              selectedPlotFeature={selectedPlotFeature}
-              onFeatureOptionSelected={(selection) =>
-                handleFeatureOptionSelection(selection)
-              }
-            />
-            {props.children[1]}
-          </React.Fragment>
+          <div
+            style={{ ...style }}
+            className={className}
+            ref={ref}
+            id={`plot-${props.plotID}`}
+            {...props}
+          >
+            {
+              <React.Fragment>
+                <PlotCommandLine
+                  plotMetaData={plotMetaData}
+                  onFeatureSelected={(selection) =>
+                    onFeatureSelected(selection)
+                  }
+                  onDeleteBtnClicked={() => onRemoveBtnClicked(props.plotID)}
+                  selectedPlotFeature={selectedPlotFeature}
+                  onFeatureOptionSelected={(selection) =>
+                    handleFeatureOptionSelection(selection)
+                  }
+                />
+                {props.children[1]}
+              </React.Fragment>
+            }
+          </div>
         ) : (
-          <React.Fragment />
+          <div
+            style={{ ...style }}
+            className={className}
+            ref={ref}
+            id={`plot-${props.plotID}`}
+          ></div>
         )}
       </div>
     );
