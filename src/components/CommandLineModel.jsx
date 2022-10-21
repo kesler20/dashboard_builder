@@ -1,5 +1,10 @@
 import { convertFilesToReadableFormat } from "./DataProcessing";
 
+/**
+ * userFiles are of the following form
+ */
+const userFiles = JSON.parse(localStorage.getItem("userFiles"));
+
 class SelectFile {
   displaySubOptions() {
     return userFiles.map((file) => {
@@ -25,7 +30,7 @@ class SelectAxis {
   displaySubOptions() {
     const readableUserFiles = convertFilesToReadableFormat(userFiles);
     // filter the readableUserFiles
-    console.log(readableUserFiles);
+    console.log("focus here",readableUserFiles);
     return ["Random Data X axis"];
   }
 }
@@ -44,15 +49,10 @@ class SelectTheme {
 }
 
 class SelectTool {
-  displayOptions() {
+  displaySubOptions() {
     return ["Data Processing/ Analysis"];
   }
 }
-
-/**
- * userFiles are of the following form
- */
-const userFiles = localStorage.getItem("userFiles");
 
 /**
  * option is a hashmap mapping the options keys displayed to the user
@@ -86,9 +86,11 @@ class State {
   constructor(state) {
     this.state = state;
   }
+  
   displaySubOptions() {
+    console.log(options[this.state])
     let currentOption = options[this.state];
-    currentOption.displaySubOptions();
+    return currentOption.displaySubOptions();
   }
 }
 
@@ -113,6 +115,7 @@ export default class CommandLineModel {
   getCurrentState() {
     return this.state;
   }
+
   displayOptions() {
     return Object.keys(options);
   }
@@ -126,10 +129,9 @@ export default class CommandLineModel {
    */
   displaySubOptions() {
     const currentState = new State(this.state);
-    currentState.displaySubOptions();
+    return currentState.displaySubOptions();
   }
 }
-
 
 //TODO: the function actions look similar look for a pattern
 // this can be made into a single object or 2 objects one for retrieving data such as dashboards and userfiles

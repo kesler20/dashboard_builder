@@ -8,7 +8,7 @@ import { FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
  * @param InputLabel
  */
 
-const CommandLineSelector = ({ props }) => {
+const CommandLineSelector = (props) => {
   const [currentFeature, setCurrentFeature] = useState("");
 
   const handleChange = (e) => {

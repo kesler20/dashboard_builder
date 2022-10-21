@@ -51,7 +51,7 @@ const PlotComponent = forwardRef(({ style, className, ...props }, ref) => {
               <PlotCommandLine
                 onOptionSelected={props.onOptionSelected}
                 onSubOptionSelected={handleSubOptionSelected}
-                commandLineData={props.commandLineData}
+                  commandLineData={props.commandLineData}
                 onDeleteBtnClicked={() =>
                   props.onRemoveBtnClicked(props.plotID)
                 }

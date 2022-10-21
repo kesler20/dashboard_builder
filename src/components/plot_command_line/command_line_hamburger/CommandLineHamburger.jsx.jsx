@@ -17,7 +17,7 @@ import { FaBars } from "react-icons/fa";
  * - plotMetaData - a list of objects with properties name and metaData, containing the features of the plot
  * i.e. [ { name: "Select a File", metaData: dashboardThemes } ...]
  */
-const CommandLineHamburger = ({ props }) => {
+const CommandLineHamburger = ( props ) => {
   /**
    * - anchorEl, open, handle click and close are used to toggle the component
    * - the onFeatureSelected prop is called within the handleClose method when the user selects a menu item

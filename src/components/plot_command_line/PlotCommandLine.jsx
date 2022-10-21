@@ -12,17 +12,17 @@ import "./PlotCommandLine.css";
  * - plotMetaData - a list of objects with properties name and metaData, containing the features of the plot
  * i.e. [ { name: "Select a File", metaData: dashboardThemes } ...]
  */
-const PlotCommandLine = ({ props }) => {
+const PlotCommandLine = (props) => {
   return (
     <div className="command-line">
       <CommandLineHamburger
         commandLineData={props.commandLineData}
         onOptionSelected={props.onOptionSelected}
-        />
+      />
       <div className="command-line__selector">
         <CommandLineSelector
-        commandLineData={props.commandLineData}
-        onSubOptionSelected={props.onSubOptionSelected}
+          commandLineData={props.commandLineData}
+          onSubOptionSelected={props.onSubOptionSelected}
         />
       </div>
       <div className="command-line__button">

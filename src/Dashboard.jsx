@@ -34,14 +34,16 @@ const Dashboard = () => {
   );
 
   // dashboard model
-  const [dashboardStructure, setDashboardStructure] = useState(
+  const [dashboardData, setDashboardStructure] = useState(
     new DashboardModel(
       "Default Title",
-      {
-        plots: {},
-        dataGrid: { x: 0, y: 0, w: 5, h: 10 },
-        tools: {},
-      },
+      [
+        {
+          plots: {},
+          dataGrid: { x: 0, y: 0, w: 5, h: 10 },
+          tools: {},
+        },
+      ],
       "white",
       "black"
     )
@@ -58,7 +60,7 @@ const Dashboard = () => {
    */
   const handleNavBtnClicked = (btnName) => {
     if (btnName === "Add Plot") {
-      dashboardStructure.addPlot();
+      dashboardData.addPlot();
     } else if (btnName === "Save Dashboard") {
       setMode("save");
     } else if (btnName === "Edit Dashboard") {
@@ -73,17 +75,17 @@ const Dashboard = () => {
    * @param {*} plotKey - the index of the plot in the dashboard
    */
   const handleRemovePlot = (plotKey) => {
-    dashboardStructure.removePlot(plotKey);
+    dashboardData.removePlot(plotKey);
   };
 
   /**
    * this is triggered when the used selects an option in the hamburger menu dropdown
-   * @param {*} selection - this is the option selected by the user which will be used 
+   * @param {*} selection - this is the option selected by the user which will be used
    * to change the state of the command line model
    */
   const handleOptionSelected = (selection) => {
-    setCommandLineData(commandLineData.changeState(selection))
-  }
+    setCommandLineData(commandLineData.changeState(selection));
+  };
 
   return (
     <div>
@@ -104,9 +106,7 @@ const Dashboard = () => {
             width: "100%",
             height: "100vh",
             backgroundColor: `${
-              theme
-                ? dashboardStructure.bgColor
-                : dashboardStructure.darkBgColor
+              theme ? dashboardData.bgColor : dashboardData.darkBgColor
             }`,
           }}
         >
@@ -117,7 +117,7 @@ const Dashboard = () => {
             breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
             cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
           >
-            {dashboardStructure.plots.map((plotMetadata, id) => {
+            {dashboardData.plots.map((plotMetadata, id) => {
               const { plot, dataGrid } = plotMetadata;
               return (
                 <PlotComponent
