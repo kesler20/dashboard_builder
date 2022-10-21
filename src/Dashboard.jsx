@@ -88,6 +88,10 @@ const Dashboard = () => {
     setCommandLineData(commandLineData.changeState(selection));
   };
 
+  /**
+   * this is used to handle the user selection of the options on main drown menu
+   * @param {*} selectedOption 
+   */
   const handleSubOptionSelected = (selectedOption) => {
     setCommandLineData(commandLineData.changeCurrentFile(selectedOption));
   };
@@ -115,6 +119,7 @@ const Dashboard = () => {
             }`,
           }}
         >
+          {/* grid layout */}
           <ResponsiveGridLayout
             className="layout"
             layouts={layouts}
@@ -142,7 +147,9 @@ const Dashboard = () => {
                 />
               );
             })}
+
           </ResponsiveGridLayout>
+        
         </div>
 
         {/* dashboard speed dial */}
