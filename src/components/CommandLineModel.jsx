@@ -202,5 +202,5 @@ export default class CommandLineModel {
 //TODO: the function actions look similar look for a pattern
 // this can be made into a single object or 2 objects one for retrieving data such as dashboards and userfiles
 // the other tio return the options
-// perhaps classes are anoverkill for the different states of the sub-options
-// find the way to include sub sub optioons
+// perhaps classes are an overkill for the different states of the sub-options
+// find the way to include sub sub options

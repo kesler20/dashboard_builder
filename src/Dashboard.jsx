@@ -23,7 +23,7 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
  * - mode - the dashboard can be in one of two modes ['edit','view']
  */
 const Dashboard = () => {
-  // representational stastes
+  // representational states
   const [mode, setMode] = useState("edit");
   const [theme, setTheme] = useState(true);
   const [currentLayout, setCurrentLayout] = useState([]);
