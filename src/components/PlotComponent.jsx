@@ -11,7 +11,7 @@ import PlotlyInterface from "./DashboardMetaData";
  */
 const PlotComponent = forwardRef(({ style, className, ...props }, ref) => {
   // this useEffect is used to synchronize the plots to the changes triggered by the user
-  const [plotly, setPlotly] = useState(
+  const [plotly, setPlotly ] = useState(
     new PlotlyInterface(`plot-${props.plotID}`)
   );
 
@@ -25,16 +25,9 @@ const PlotComponent = forwardRef(({ style, className, ...props }, ref) => {
     plotly.addScatterPlot(0);
     plotly.addColorDimension([0, 1, 3, 3, 3, 5, 6, 2, 8, 9], 0);
     plotly.addSizeDimension([0, 1, 3, 3, 3, 5, 6, 2, 8, 9], 0);
-
-    console.log(plotly.plotData);
     plotly.constructInitialPlot();
   });
-
-  const handleSubOptionSelected = (subOption) => {
-    console.log(subOption)
-  }
-
-
+  
   return (
     // display the plot with the command line and the handle if the viewMode is edit, otherwise display the plot
     <div>
@@ -50,7 +43,7 @@ const PlotComponent = forwardRef(({ style, className, ...props }, ref) => {
             <React.Fragment>
               <PlotCommandLine
                 onOptionSelected={props.onOptionSelected}
-                onSubOptionSelected={handleSubOptionSelected}
+                onSubOptionSelected={props.onSubOptionSelected}
                   commandLineData={props.commandLineData}
                 onDeleteBtnClicked={() =>
                   props.onRemoveBtnClicked(props.plotID)

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Delete } from "@material-ui/icons";
 import CommandLineSelector from "./command_line_selector/CommandLineSelector";
 import CommandLineHamburger from "./command_line_hamburger/CommandLineHamburger.jsx";

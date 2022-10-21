@@ -26,6 +26,7 @@ const Dashboard = () => {
   // representational stastes
   const [mode, setMode] = useState("edit");
   const [theme, setTheme] = useState(true);
+  const [currentLayout, setCurrentLayout] = useState([]);
 
   // data processing states
   // command line model
@@ -34,7 +35,7 @@ const Dashboard = () => {
   );
 
   // dashboard model
-  const [dashboardData, setDashboardStructure] = useState(
+  const [dashboardData, setDashboardData] = useState(
     new DashboardModel(
       "Default Title",
       [
@@ -87,6 +88,10 @@ const Dashboard = () => {
     setCommandLineData(commandLineData.changeState(selection));
   };
 
+  const handleSubOptionSelected = (selectedOption) => {
+    setCommandLineData(commandLineData.changeCurrentFile(selectedOption));
+  };
+
   return (
     <div>
       <div className="flex-column">
@@ -113,7 +118,7 @@ const Dashboard = () => {
           <ResponsiveGridLayout
             className="layout"
             layouts={layouts}
-            onLayoutChange={(layout) => console.log(layout)}
+            onLayoutChange={setCurrentLayout}
             breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
             cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
           >
@@ -133,6 +138,7 @@ const Dashboard = () => {
                   // data processing properties
                   commandLineData={commandLineData}
                   onOptionSelected={handleOptionSelected}
+                  onSubOptionSelected={handleSubOptionSelected}
                 />
               );
             })}

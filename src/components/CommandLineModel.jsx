@@ -4,15 +4,29 @@ import { convertFilesToReadableFormat } from "./DataProcessing";
  * userFiles are of the following form
  */
 const userFiles = JSON.parse(localStorage.getItem("userFiles"));
+const userFileNames = userFiles.map((file) => {
+  return file.filename;
+});
 
+/**
+ * this correspond to the file selected by the user
+ */
+var currentFIle;
+
+// the following classes represent the various states of the option class
+/**
+ * this is the initial state which returns the names of the user files
+ */
 class SelectFile {
   displaySubOptions() {
-    return userFiles.map((file) => {
-      return file.filename;
-    });
+    return userFileNames;
   }
 }
 
+/**
+ * this state is selected when the user clicks
+ * Select a Plot on the hamburger drop down menu
+ */
 class SelectPlot {
   displaySubOptions() {
     return [
@@ -26,28 +40,47 @@ class SelectPlot {
   }
 }
 
+/**
+ * this state is selected when the user clicks
+ * any of the Select X/Y/Z axis or Select a Color/Size on the hamburger drop down menu
+ * the state depends on a global variable stored in a (Singleton)
+ *  which is used track the latest file selected by the user
+ */
 class SelectAxis {
   displaySubOptions() {
-    const readableUserFiles = convertFilesToReadableFormat(userFiles);
-    // filter the readableUserFiles
-    console.log("focus here",readableUserFiles);
-    return ["Random Data X axis"];
+    // if no file has yet been selected by the user return warning
+    if (currentFIle == undefined) return ["Please select a file"];
+
+    // convert all the user files in column arrays
+    const readableUserFile = convertFilesToReadableFormat(userFiles);
+
+    // readableFiles is an array of arrays containing all the user files in column format
+    // get the file id of the selected file from the user files
+    // use the file id to access the right array
+    const selectedFile = userFiles.filter(
+      (file) => file.filename === currentFIle
+    );
+    const selectedFileId = userFiles.indexOf(selectedFile[0]);
+
+    // return the keys of the first object (which correspond to the columns) of the selected file
+    return Object.keys(readableUserFile[selectedFileId][0]);
   }
 }
 
-class EditPlot {
-  displaySubOptions() {
-    // filter plots depedning on the current plot selected by the userr
-    return [];
-  }
-}
-
+/**
+ * this state is selected when the user clicks
+ * Select a Theme on the hamburger drop down menu
+ */
 class SelectTheme {
   displaySubOptions() {
     return ["seaborn", "dark", "light", "gray", "default", "transparent"];
   }
 }
 
+/**
+ * this state is selected when the user clicks
+ * Select a Tool on the hamburger drop down menu
+ */
 class SelectTool {
   displaySubOptions() {
     return ["Data Processing/ Analysis"];
@@ -73,9 +106,6 @@ const options = {
   "Select a Tool": new SelectTool(),
 };
 
-const plots = {
-  "Scatter Plot": [],
-};
 /**
  * The state of the command line depends on the option selected.
  * if the state is a select file, then the dropdown menu will display all the user files
@@ -86,9 +116,14 @@ class State {
   constructor(state) {
     this.state = state;
   }
-  
+
+  /**
+   * this function is used to allow the context (CommandLineModel class) to call the displaySubOptions
+   * method on the correct class
+   *
+   * @returns an array of strings which correspond to the sub-options returned by the state
+   */
   displaySubOptions() {
-    console.log(options[this.state])
     let currentOption = options[this.state];
     return currentOption.displaySubOptions();
   }
@@ -107,15 +142,46 @@ export default class CommandLineModel {
     this.state = "Select a File";
   }
 
+  /**
+   * this is the setter for the state of the context
+   *
+   * @param {*} state - the state can take the value of any of the options displayed under the hamburger menu
+   *
+   * @returns - this
+   */
   changeState(state) {
     this.state = state;
     return this;
   }
 
+  /**
+   * this is used to change the global environment by updating the currentFile variable of the Singleton
+   *
+   * @param {*} fileName - this takes the value of the last file selected by th user
+   *
+   * @returns this
+   */
+  changeCurrentFile(fileName) {
+    if (userFileNames.indexOf(fileName) !== -1) {
+      currentFIle = fileName;
+    }
+    return this;
+  }
+
+  /**
+   * this is the getter for the state of the context
+   *
+   * @returns - this.state - the current state of the context
+   */
   getCurrentState() {
     return this.state;
   }
 
+  /**
+   * this is used to display the menuItems on the hamburger dropdown menu
+   *
+   * @returns options - the array of string corresponding to the keys of the options object.
+   */
   displayOptions() {
     return Object.keys(options);
   }

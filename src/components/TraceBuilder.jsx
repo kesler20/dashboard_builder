@@ -243,7 +243,6 @@ export default class TraceBuilder {
     let data = {
       type,
       visible: true,
-      type: "constant",
       value,
       color: "#85144B",
       thickness: 1.5,
