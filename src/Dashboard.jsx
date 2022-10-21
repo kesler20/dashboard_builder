@@ -1,65 +1,17 @@
 import React, { useState } from "react";
 import "/node_modules/react-grid-layout/css/styles.css";
 import "/node_modules/react-resizable/css/styles.css";
-import { Responsive, WidthProvider } from "react-grid-layout"
+import { Responsive, WidthProvider } from "react-grid-layout";
 import PlotComponent from "./components/PlotComponent";
 import Nav from "./components/dashboard_speedial/Nav";
 import DashboardThemeBtn from "./components/DashboardThemeBtn";
 import DashboardTitle from "./components/DashboardTitle";
 import "./Dashboard.css";
 import layouts from "./layouts";
-/////////////////////////////////////////////
-// DASHBOARD CONTAINER FOR THE DASHBOARD PAGE
-/////////////////////////////////////////////
-
-let x = Array.from({ length: 20 }, () => Math.random() * (6 - 3) + 3);
-let y = Array.from({ length: 20 }, () => Math.random() * (6 - 3) + 3);
-let z = Array.from({ length: 10 }, () => Math.random() * (6 - 1) + 3);
-let w = Array.from({ length: 10 }, () => Math.random() * (6 - 1) + 3);
-let labels = ["Quarter 1", "Quarter 2", "Quarter 3", "Quarter 4"];
-let values = Array.from({ length: 5 }, () => Math.random() * 10);
-let heat = [
-  Array.from({ length: 10 }, () => Math.random() * 10),
-  Array.from({ length: 10 }, () => Math.random() * 10),
-  Array.from({ length: 10 }, () => Math.random() * 10),
-  Array.from({ length: 10 }, () => Math.random() * 10),
-];
-/**
- * Selection Data
- */
-const editableFeatures = [
-  {
-    name: "Select a File",
-    metaData: [
-      { name: "Experimental_Data.csv", data: { x, y } },
-      { name: "Random_data.csv", data: { x: z, y: w } },
-      { name: "Portfolio_data.csv", data: { x: labels, y: values } },
-      { name: "Another_random.csv", data: { x: [], y: heat } },
-    ],
-  },
-  {
-    name: "Select a Plot",
-    metaData: [
-      { name: "Scatter Plot" },
-      { name: "Pie Chart" },
-      { name: "BarChart" },
-      { name: "Heatmap" },
-      { name: "3D Plot" },
-    ],
-  },
-  {
-    name: "Select a Theme",
-    metaData: [
-      { name: "seaborn" },
-      { name: "dark" },
-      { name: "light" },
-      { name: "gray" },
-    ],
-  },
-];
+import DashboardModel from "./components/DashboardModel";
+import CommandLineModel from "./components/CommandLineModel";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
-
 
 /**
  * The Dashboard container is used to manipulate the data within the Dashboard page
@@ -71,17 +23,29 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
  * - mode - the dashboard can be in one of two modes ['edit','view']
  */
 const Dashboard = () => {
-  const [dataGrid, setDataGrid] = useState([{ x: 0, y: 0, w: 5, h: 10 }]);
-  const [plotKeys, setPlotKeys] = useState([0]);
+  // representational stastes
   const [mode, setMode] = useState("edit");
-  const [plotMetaData, setPlotMetaData] = useState(editableFeatures);
-  const [selectedPlotFeature, setSelectedPlotFeature] = useState(
-    editableFeatures[0]
-  );
   const [theme, setTheme] = useState(true);
-  const [dashboardStructure, setDashboardStructure] = useState([
-    { data: { x, y }, layout: {}, plotType: "scatter" },
-  ]);
+
+  // data processing states
+  // command line model
+  const [commandLineData, setCommandLineData] = useState(
+    new CommandLineModel()
+  );
+
+  // dashboard model
+  const [dashboardStructure, setDashboardStructure] = useState(
+    new DashboardModel(
+      "Default Title",
+      {
+        plots: {},
+        dataGrid: { x: 0, y: 0, w: 5, h: 10 },
+        tools: {},
+      },
+      "white",
+      "black"
+    )
+  );
 
   /**
    * Handles the navbar click event of Add Plot, Save/ Edit Dashboard
@@ -94,28 +58,7 @@ const Dashboard = () => {
    */
   const handleNavBtnClicked = (btnName) => {
     if (btnName === "Add Plot") {
-      dataGrid.push({ x: 0, y: plotKeys.length * 2, w: 5, h: 10 });
-      plotKeys.push(plotKeys.length);
-      setDataGrid(
-        dataGrid.map((grid) => {
-          return grid;
-        })
-      );
-      setPlotKeys(
-        plotKeys.map((k) => {
-          return k;
-        })
-      );
-      dashboardStructure.push({
-        data: { x, y },
-        layout: {},
-        plotType: "scatter",
-      });
-      setDashboardStructure(
-        dashboardStructure.map((dashboard) => {
-          return dashboard;
-        })
-      );
+      dashboardStructure.addPlot();
     } else if (btnName === "Save Dashboard") {
       setMode("save");
     } else if (btnName === "Edit Dashboard") {
@@ -125,25 +68,27 @@ const Dashboard = () => {
     }
   };
 
+  /**
+   * this is triggered when the delete button on a plot command line is clicked
+   * @param {*} plotKey - the index of the plot in the dashboard
+   */
   const handleRemovePlot = (plotKey) => {
-    setPlotKeys(plotKeys.filter((k) => k !== plotKey));
-    setDashboardStructure(
-      dashboardStructure.filter(
-        (dashboard) => dashboardStructure.indexOf(dashboard) === plotKey
-      )
-    );
+    dashboardStructure.removePlot(plotKey);
   };
 
-  const handleFeatureSelection = (selection) => {
-    setSelectedPlotFeature(
-      plotMetaData.filter((feature) => feature.name === selection)[0]
-    );
-  };
+  /**
+   * this is triggered when the used selects an option in the hamburger menu dropdown
+   * @param {*} selection - this is the option selected by the user which will be used 
+   * to change the state of the command line model
+   */
+  const handleOptionSelected = (selection) => {
+    setCommandLineData(commandLineData.changeState(selection))
+  }
 
   return (
     <div>
-      <Nav onNavBtnClicked={(btnName) => handleNavBtnClicked(btnName)} />
       <div className="flex-column">
+        {/* dashboard navbar  */}
         <div
           className={theme ? "dashboard__nav--light" : "dashboard__nav--dark"}
         >
@@ -152,41 +97,50 @@ const Dashboard = () => {
             <DashboardThemeBtn onThemeChange={() => setTheme(!theme)} />
           </div>
         </div>
+
+        {/* dashboard plots */}
         <div
           style={{
             width: "100%",
             height: "100vh",
-            backgroundColor: `${theme ? "#d6e4ea" : "#161d33"}`,
+            backgroundColor: `${
+              theme
+                ? dashboardStructure.bgColor
+                : dashboardStructure.darkBgColor
+            }`,
           }}
         >
           <ResponsiveGridLayout
             className="layout"
             layouts={layouts}
-            onLayoutChange={(layout) => setDataGrid(layout)}
+            onLayoutChange={(layout) => console.log(layout)}
             breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
             cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
           >
-            {plotKeys.map((plotKey) => {
+            {dashboardStructure.plots.map((plotMetadata, id) => {
+              const { plot, dataGrid } = plotMetadata;
               return (
                 <PlotComponent
-                  data={dashboardStructure[plotKey].data}
-                  layout={dashboardStructure[plotKey].layout}
-                  plotType={dashboardStructure[plotKey].plotType}
-                  key={plotKey}
-                  data-grid={dataGrid[plotKey]}
-                  plotID={plotKey}
-                  plotMetaData={plotMetaData}
-                  selectedPlotFeature={selectedPlotFeature}
-                  onFeatureSelected={(selection) =>
-                    handleFeatureSelection(selection)
-                  }
-                  onRemoveBtnClicked={(plotKey) => handleRemovePlot(plotKey)}
+                  // required props for react, react grid layout, plotly
+                  key={id}
+                  data-grid={dataGrid}
+                  plotID={id}
+                  // representational properties
                   viewMode={mode}
+                  // structural properties
+                  data={plot}
+                  onRemoveBtnClicked={handleRemovePlot}
+                  // data processing properties
+                  commandLineData={commandLineData}
+                  onOptionSelected={handleOptionSelected}
                 />
               );
             })}
           </ResponsiveGridLayout>
         </div>
+
+        {/* dashboard speed dial */}
+        <Nav onNavBtnClicked={(btnName) => handleNavBtnClicked(btnName)} />
       </div>
     </div>
   );

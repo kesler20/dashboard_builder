@@ -4,10 +4,6 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { FaBars } from "react-icons/fa";
 
-////////////////////////////////////////////////
-// HAMBURGER MENU FOR SELECTING EDITABLE FEATURE
-////////////////////////////////////////////////
-
 /**
  * The command line hamburger is the left most button in the plot command line
  * This is used to select the feature of the dashboard that we want to edit
@@ -21,12 +17,10 @@ import { FaBars } from "react-icons/fa";
  * - plotMetaData - a list of objects with properties name and metaData, containing the features of the plot
  * i.e. [ { name: "Select a File", metaData: dashboardThemes } ...]
  */
-const CommandLineHamburger = ({ onFeatureSelected, plotMetaData }) => {
-  /*
-
-   - anchorEl, open, handle click and close are used to toggle the component
-   - the onFeatureSelected prop is called within the handleClose method when the user selects a menu item 
-
+const CommandLineHamburger = ({ props }) => {
+  /**
+   * - anchorEl, open, handle click and close are used to toggle the component
+   * - the onFeatureSelected prop is called within the handleClose method when the user selects a menu item
    */
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -34,19 +28,12 @@ const CommandLineHamburger = ({ onFeatureSelected, plotMetaData }) => {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = (selection) => {
-    // to make sure that an option has being clicked
-    if (plotMetaData.filter((data) => data.name === selection).length >= 1) {
-      onFeatureSelected(selection);
-      setAnchorEl(null);
-    }
+    props.onOptionSelected(selection);
+    setAnchorEl(null);
   };
-  /* 
 
-  - editable feature should be converted into data coming from a state
-  - find a way to pass METADATA to the user selection component
-
-   */
   return (
     <div>
       <Button
@@ -67,14 +54,14 @@ const CommandLineHamburger = ({ onFeatureSelected, plotMetaData }) => {
           "aria-labelledby": "basic-button",
         }}
       >
-        {plotMetaData.map((editableFeature) => {
+        {props.commandLineData.displayOptions().map((option, id) => {
           return (
             <MenuItem
-              key={plotMetaData.indexOf(editableFeature)}
-              onClick={() => handleClose(editableFeature.name)}
-              value={editableFeature.name}
+              key={id}
+              onClick={() => handleClose(option)}
+              value={option}
             >
-              {editableFeature.name}
+              {option}
             </MenuItem>
           );
         })}

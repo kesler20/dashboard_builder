@@ -12,29 +12,21 @@ import "./PlotCommandLine.css";
  * - plotMetaData - a list of objects with properties name and metaData, containing the features of the plot
  * i.e. [ { name: "Select a File", metaData: dashboardThemes } ...]
  */
-const PlotCommandLine = ({
-  onDeleteBtnClicked,
-  plotMetaData,
-  selectedPlotFeature,
-  onFeatureSelected,
-  onFeatureOptionSelected,
-}) => {
+const PlotCommandLine = ({ props }) => {
   return (
     <div className="command-line">
       <CommandLineHamburger
-        plotMetaData={plotMetaData}
-        onFeatureSelected={(selection) => onFeatureSelected(selection)}
-      />
+        commandLineData={props.commandLineData}
+        onOptionSelected={props.onOptionSelected}
+        />
       <div className="command-line__selector">
         <CommandLineSelector
-          selectedPlotFeature={selectedPlotFeature}
-          onFeatureOptionSelected={(selection) =>
-            onFeatureOptionSelected(selection)
-          }
+        commandLineData={props.commandLineData}
+        onSubOptionSelected={props.onSubOptionSelected}
         />
       </div>
       <div className="command-line__button">
-        <Delete onClick={onDeleteBtnClicked} />
+        <Delete onClick={props.onDeleteBtnClicked} />
       </div>
     </div>
   );

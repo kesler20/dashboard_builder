@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import PlotCommandLine from "./plot_command_line/PlotCommandLine";
 import PlotlyInterface from "./DashboardMetaData";
 
@@ -10,8 +10,12 @@ import PlotlyInterface from "./DashboardMetaData";
  *  @see section on custom components from  https://github.com/react-grid-layout/react-grid-layout
  */
 const PlotComponent = forwardRef(({ style, className, ...props }, ref) => {
+  // this useEffect is used to synchronize the plots to the changes triggered by the user
+  const [plotly, setPlotly] = useState(
+    new PlotlyInterface(`plot-${props.plotID}`)
+  );
+
   useEffect(() => {
-    const plotly = new PlotlyInterface(`plot-${props.plotID}`);
     plotly.addPlotTitle("This is a test plot");
     plotly.addTrace("scatter3d", "test trace 2");
 
@@ -26,9 +30,10 @@ const PlotComponent = forwardRef(({ style, className, ...props }, ref) => {
     plotly.constructInitialPlot();
   });
 
-  const handleFeatureOptionSelection = (selection) => {
-    console.log(selection);
-  };
+  const handleSubOptionSelected = (subOption) => {
+    console.log(subOption)
+  }
+
 
   return (
     // display the plot with the command line and the handle if the viewMode is edit, otherwise display the plot
@@ -44,13 +49,12 @@ const PlotComponent = forwardRef(({ style, className, ...props }, ref) => {
           {
             <React.Fragment>
               <PlotCommandLine
-                plotMetaData={props.plotMetaData}
-                onFeatureSelected={props.onFeatureSelected}
+                onOptionSelected={props.onOptionSelected}
+                onSubOptionSelected={handleSubOptionSelected}
+                commandLineData={props.commandLineData}
                 onDeleteBtnClicked={() =>
                   props.onRemoveBtnClicked(props.plotID)
                 }
-                selectedPlotFeature={props.selectedPlotFeature}
-                onFeatureOptionSelected={handleFeatureOptionSelection}
               />
               <p className="color-text">Color</p>
               {props.children[1]}
@@ -73,3 +77,4 @@ export default PlotComponent;
 
 // TODO: on hover add the text that says what the variables are if there is color and size
 //TODO: remove all this many props and make sure that there is no state for the components
+// TODO: think about how to push the state up to the container

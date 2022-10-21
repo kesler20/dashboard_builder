@@ -8,35 +8,30 @@ import { FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
  * @param InputLabel
  */
 
-const CommandLineSelector = ({
-  selectedPlotFeature,
-  onFeatureOptionSelected,
-}) => {
+const CommandLineSelector = ({ props }) => {
   const [currentFeature, setCurrentFeature] = useState("");
 
-  const handleChange = (selection) => {
-    onFeatureOptionSelected(selection);
-    setCurrentFeature(selection);
+  const handleChange = (e) => {
+    setCurrentFeature(e.target.value);
+    props.onSubOptionSelected(e.target.value);
   };
+
   return (
     <FormControl fullWidth variant="outlined">
       <InputLabel id="demo-simple-select-label">
-        {selectedPlotFeature.name}
+        {props.commandLineData.getCurrentState()}
       </InputLabel>
       <Select
         labelId="demo-simple-select-label"
         id="demo-simple-select"
         value={currentFeature}
         label="Plot"
-        onChange={(e) => handleChange(e.target.value)}
+        onChange={handleChange}
       >
-        {selectedPlotFeature.metaData.map((option) => {
+        {props.commandLineData.displaySubOptions().map((option, id) => {
           return (
-            <MenuItem
-              key={selectedPlotFeature.metaData.indexOf(option)}
-              value={option.name}
-            >
-              {option.name}
+            <MenuItem key={id} value={option}>
+              {option}
             </MenuItem>
           );
         })}
