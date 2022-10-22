@@ -26,7 +26,6 @@ export const subOptions = {
     "3D Plot",
   ],
   "Select a Theme": [
-    "seaborn",
     "dark",
     "light",
     "gray",

@@ -87,6 +87,17 @@ const Dashboard = () => {
     }
   }, [currentUserSelection]);
 
+  useEffect(() => {
+    if (theme !== true) {
+      const { plot, layout } = dashboardData.plots[0];
+      const plotly = new PlotlyInterface("plot-0");
+      plotly.importTrace(plot, 0);
+      plotly.importLayout(layout);
+      console.log(plotly.plotData[0], plotly.layout);
+      plotly.constructInitialPlot();
+    }
+  }, [theme]);
+
   /**
    * Handles the navbar click event of Add Plot, Save/ Edit Dashboard
    *
@@ -245,6 +256,44 @@ const Dashboard = () => {
     /**
      * handle the theme of the plot
      */
+    if (subOptions["Select a Theme"].indexOf(selectedOption) !== -1) {
+      let backgroundColor;
+      let paperBgColor;
+      let gridColor;
+      if (selectedOption === "transparent") {
+        backgroundColor = theme
+          ? dashboardData.bgColor
+          : dashboardData.darkBgColor;
+        paperBgColor = theme
+          ? dashboardData.bgColor
+          : dashboardData.darkBgColor;
+        gridColor = theme ? "blue" : "white";
+        // update the theme
+      } else if (selectedOption === "default") {
+        backgroundColor = "#e5ecf6";
+        paperBgColor = "white";
+        gridColor = "white";
+      } else if (selectedOption === "light") {
+        backgroundColor = "white";
+        paperBgColor = "white";
+        gridColor = "gray";
+      } else if (selectedOption === "gray") {
+        backgroundColor = "gray";
+        paperBgColor = "white";
+        gridColor = "blue";
+      } else if (selectedOption === "dark") {
+        backgroundColor = "1B2444";
+        paperBgColor = "1B2444";
+        gridColor = "#768DB7";
+      } else {
+        backgroundColor = "gray";
+        paperBgColor = "white";
+        gridColor = "white";
+      }
+      layoutBuilder.styleBgColor(paperBgColor, backgroundColor);
+      layoutBuilder.addGrid(gridColor, "x");
+      layoutBuilder.addGrid(gridColor, "y");
+    }
 
     /**
      * handle the tool selection
