@@ -11,6 +11,12 @@ import layouts from "./layouts";
 import DashboardModel from "./components/DashboardModel";
 import CommandLineModel from "./components/CommandLineModel";
 import PlotlyInterface from "./components/DashboardMetaData";
+import {
+  convertFilesToTabularFormat,
+  getUserFileId,
+  userFileNames,
+  userFiles,
+} from "./components/DataProcessing";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -52,21 +58,29 @@ const Dashboard = () => {
     )
   );
 
-  // synchronization states
+  const [currentAxis, setCurrentAxis] = useState([]);
+  const [currentFile, setCurrentFile] = useState("");
+  const [tabularFiles, setTabularFiles] = useState({});
   // this useEffect is used to synchronize the plots to the changes triggered by the user
   useEffect(() => {
-    const { plotly } = dashboardData.plots[0];
-    plotly.addPlotTitle("This is a test plot");
-    plotly.addTrace("scatter3d", "test trace 2");
-
-    plotly.addAxisDimension("y", [0, 1, 3, 3, 3, 5, 6, 2, 8, 9], "space", 0);
-    plotly.addAxisDimension("x", [1, 1, 2, 3, 4, 5, 6, 7, 8, 9], "space", 0);
-    plotly.addAxisDimension("z", [1, 1, 2, 3, 4, 5, 6, 7, 8, 9], "space", 0);
-    plotly.addScatterPlot(0);
-    plotly.addColorDimension([0, 1, 3, 3, 3, 5, 6, 2, 8, 9], 0);
-    plotly.addSizeDimension([0, 1, 3, 3, 3, 5, 6, 2, 8, 9], 0);
-    plotly.constructInitialPlot();
-  });
+    if (currentLayout !== []) {
+      dashboardData.plots.forEach(plotElement => {
+        const { plotly, plot } = plotElement;
+        // make use of the plot to plot any data saved to the dashboardStructure
+        // break down the useEffect into multiple smaller useEffects which deal with one feature update
+        plotly.addPlotTitle(currentFile);
+        plotly.addTrace("scatter3d", "test trace 2");
+  
+        plotly.addAxisDimension("y", [0, 1, 3, 3, 3, 5, 6, 2, 8, 9], "space", 0);
+        plotly.addAxisDimension("x", [1, 1, 2, 3, 4, 5, 6, 7, 8, 9], "space", 0);
+        plotly.addAxisDimension("z", [1, 1, 2, 3, 4, 5, 6, 7, 8, 9], "space", 0);
+        plotly.addScatterPlot(0);
+        plotly.addColorDimension([0, 1, 3, 3, 3, 5, 6, 2, 8, 9], 0);
+        plotly.addSizeDimension([0, 1, 3, 3, 3, 5, 6, 2, 8, 9], 0);
+        plotly.constructInitialPlot();
+      });
+    }
+  }, [currentLayout]);
 
   /**
    * Handles the navbar click event of Add Plot, Save/ Edit Dashboard
@@ -79,7 +93,7 @@ const Dashboard = () => {
    */
   const handleNavBtnClicked = (btnName) => {
     if (btnName === "Add Plot") {
-      dashboardData.addPlot();
+      setDashboardData(dashboardData.addPlot());
     } else if (btnName === "Save Dashboard") {
       setMode("save");
     } else if (btnName === "Edit Dashboard") {
@@ -99,11 +113,21 @@ const Dashboard = () => {
 
   /**
    * this is triggered when the used selects an option in the hamburger menu dropdown
+   * 
+   * compound updates such a updating the axis 
+   * (an update which requires data from the selection and the selectedOption) can be implemented
+   * using an array if there are the right control in plage
+   * initially you push one piece of information to the array when the user selects an option form the
+   * hamburger menu, then you push the other when the user selects the option from the main drop down menu
+   * 
    * @param {*} selection - this is the option selected by the user which will be used
    * to change the state of the command line model
    */
   const handleOptionSelected = (selection) => {
     setCommandLineData(commandLineData.changeState(selection));
+    if (selection === "Select X Axis") {
+      setCurrentAxis(["x"]);
+    }
   };
 
   /**
@@ -111,8 +135,14 @@ const Dashboard = () => {
    * @param {*} selectedOption
    */
   const handleSubOptionSelected = (selectedOption) => {
-    console.log(selectedOption);
     setCommandLineData(commandLineData.changeCurrentFile(selectedOption));
+    if (userFileNames.indexOf(selectedOption) !== -1) {
+      setCurrentFile(selectedOption);
+      setTabularFiles(
+        convertFilesToTabularFormat(userFiles)[getUserFileId(selectedOption)]
+      );
+
+    }
   };
 
   return (
