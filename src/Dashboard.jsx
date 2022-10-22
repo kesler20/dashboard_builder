@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "/node_modules/react-grid-layout/css/styles.css";
 import "/node_modules/react-resizable/css/styles.css";
 import { Responsive, WidthProvider } from "react-grid-layout";
@@ -10,6 +10,7 @@ import "./Dashboard.css";
 import layouts from "./layouts";
 import DashboardModel from "./components/DashboardModel";
 import CommandLineModel from "./components/CommandLineModel";
+import PlotlyInterface from "./components/DashboardMetaData";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -28,7 +29,7 @@ const Dashboard = () => {
   const [theme, setTheme] = useState(true);
   const [currentLayout, setCurrentLayout] = useState([]);
 
-  // data processing states
+  // data flow states
   // command line model
   const [commandLineData, setCommandLineData] = useState(
     new CommandLineModel()
@@ -43,12 +44,29 @@ const Dashboard = () => {
           plots: {},
           dataGrid: { x: 0, y: 0, w: 5, h: 10 },
           tools: {},
+          plotly: new PlotlyInterface("plot-0"),
         },
       ],
       "white",
       "black"
     )
   );
+
+  // synchronization states
+  // this useEffect is used to synchronize the plots to the changes triggered by the user
+  useEffect(() => {
+    const { plotly } = dashboardData.plots[0];
+    plotly.addPlotTitle("This is a test plot");
+    plotly.addTrace("scatter3d", "test trace 2");
+
+    plotly.addAxisDimension("y", [0, 1, 3, 3, 3, 5, 6, 2, 8, 9], "space", 0);
+    plotly.addAxisDimension("x", [1, 1, 2, 3, 4, 5, 6, 7, 8, 9], "space", 0);
+    plotly.addAxisDimension("z", [1, 1, 2, 3, 4, 5, 6, 7, 8, 9], "space", 0);
+    plotly.addScatterPlot(0);
+    plotly.addColorDimension([0, 1, 3, 3, 3, 5, 6, 2, 8, 9], 0);
+    plotly.addSizeDimension([0, 1, 3, 3, 3, 5, 6, 2, 8, 9], 0);
+    plotly.constructInitialPlot();
+  });
 
   /**
    * Handles the navbar click event of Add Plot, Save/ Edit Dashboard
@@ -90,9 +108,10 @@ const Dashboard = () => {
 
   /**
    * this is used to handle the user selection of the options on main drown menu
-   * @param {*} selectedOption 
+   * @param {*} selectedOption
    */
   const handleSubOptionSelected = (selectedOption) => {
+    console.log(selectedOption);
     setCommandLineData(commandLineData.changeCurrentFile(selectedOption));
   };
 
@@ -147,11 +166,8 @@ const Dashboard = () => {
                 />
               );
             })}
-
           </ResponsiveGridLayout>
-        
         </div>
-
         {/* dashboard speed dial */}
         <Nav onNavBtnClicked={(btnName) => handleNavBtnClicked(btnName)} />
       </div>

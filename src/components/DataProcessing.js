@@ -1,3 +1,12 @@
+/**
+ * userFiles are of the following form
+ */
+export const userFiles = JSON.parse(localStorage.getItem("userFiles"));
+
+export const userFileNames = userFiles.map((file) => {
+  return file.filename;
+});
+
 export const convertFilesToReadableFormat = (userFiles) => {
   let readableUserFiles = [];
   userFiles.forEach((v, k) => {
@@ -15,4 +24,11 @@ export const convertFilesToReadableFormat = (userFiles) => {
     readableUserFiles.push(cleanerData);
   });
   return readableUserFiles;
+};
+
+export const getUserFileId = (selectedFilename) => {
+  const selectedFile = userFiles.filter(
+    (file) => file.filename === selectedFilename
+  )[0];
+  return userFiles.indexOf(selectedFile);
 };

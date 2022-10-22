@@ -265,7 +265,7 @@ if __name__ == "__main__":
                 osi.replace_file(file)
     elif sys.argv[1] == "test":
         test_and_push_to_github(os.getcwd(),sys.argv[2])
-    elif sys.argv[1] == "init npm":
+    elif sys.argv[1] == "npm":
         initialise_npm_process(os.getcwd())
     else:
         push_to_github(os.getcwd())

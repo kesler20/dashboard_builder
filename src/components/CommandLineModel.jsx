@@ -1,12 +1,9 @@
-import { convertFilesToReadableFormat } from "./DataProcessing";
-
-/**
- * userFiles are of the following form
- */
-const userFiles = JSON.parse(localStorage.getItem("userFiles"));
-const userFileNames = userFiles.map((file) => {
-  return file.filename;
-});
+import {
+  convertFilesToReadableFormat,
+  userFiles,
+  userFileNames,
+  getUserFileId,
+} from "./DataProcessing";
 
 /**
  * this correspond to the file selected by the user
@@ -57,11 +54,7 @@ class SelectAxis {
     // readableFiles is an array of arrays containing all the user files in column format
     // get the file id of the selected file from the user files
     // use the file id to access the right array
-    const selectedFile = userFiles.filter(
-      (file) => file.filename === currentFIle
-    );
-    const selectedFileId = userFiles.indexOf(selectedFile[0]);
-
+    const selectedFileId = getUserFileId(currentFIle);
     // return the keys of the first object (which correspond to the columns) of the selected file
     return Object.keys(readableUserFile[selectedFileId][0]);
   }
