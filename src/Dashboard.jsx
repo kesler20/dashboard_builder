@@ -50,7 +50,6 @@ const Dashboard = () => {
           plots: {},
           dataGrid: { x: 0, y: 0, w: 5, h: 10 },
           tools: {},
-          plotly: new PlotlyInterface("plot-0"),
         },
       ],
       "white",
@@ -61,22 +60,14 @@ const Dashboard = () => {
   const [currentAxis, setCurrentAxis] = useState([]);
   const [currentFile, setCurrentFile] = useState("");
   const [tabularFiles, setTabularFiles] = useState({});
+  
   // this useEffect is used to synchronize the plots to the changes triggered by the user
   useEffect(() => {
     if (currentLayout !== []) {
-      dashboardData.plots.forEach(plotElement => {
-        const { plotly, plot } = plotElement;
-        // make use of the plot to plot any data saved to the dashboardStructure
-        // break down the useEffect into multiple smaller useEffects which deal with one feature update
-        plotly.addPlotTitle(currentFile);
-        plotly.addTrace("scatter3d", "test trace 2");
-  
-        plotly.addAxisDimension("y", [0, 1, 3, 3, 3, 5, 6, 2, 8, 9], "space", 0);
-        plotly.addAxisDimension("x", [1, 1, 2, 3, 4, 5, 6, 7, 8, 9], "space", 0);
-        plotly.addAxisDimension("z", [1, 1, 2, 3, 4, 5, 6, 7, 8, 9], "space", 0);
-        plotly.addScatterPlot(0);
-        plotly.addColorDimension([0, 1, 3, 3, 3, 5, 6, 2, 8, 9], 0);
-        plotly.addSizeDimension([0, 1, 3, 3, 3, 5, 6, 2, 8, 9], 0);
+      dashboardData.plots.forEach((plotElement, id) => {
+        const { plot } = plotElement;
+        const plotly = new PlotlyInterface(`plot-${id}`)
+        plotly.importTrace(plot,0, plot.name)
         plotly.constructInitialPlot();
       });
     }

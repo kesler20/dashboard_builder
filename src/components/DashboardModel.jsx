@@ -57,4 +57,30 @@ export default class DashboardModel {
     this.darkBgColor = darkBgColor;
     return this;
   }
+
+  buildPlot() {
+    return this.plots;
+  }
+
+  /**
+   * this returns the plot object within the array:
+   * ```javascript
+   *{
+   *  plot: {},
+   *  dataGrid: { x: 0, y: 0, w: 5, h: 10 },
+   *  tools: {},
+   *  plotly: new PlotlyInterface(`plotly-${this.plots.length}`)
+   * }
+   * ```
+   * @param {*} id - the index of the plot within the plots array
+   *
+   * @returns this.plots[id]
+   */
+  getPlot(id) {
+    return this.plots[id].plot;
+  }
+
+  getPlotlyObject(id) {
+    return this.plots[id].plotly;
+  }
 }

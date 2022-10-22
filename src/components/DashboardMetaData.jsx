@@ -46,6 +46,13 @@ export default class PlotlyInterface {
     this.layout = layoutBuilder.buildLayout();
   }
 
+  importTrace(trace, traceID, name) {
+    const traceBuilder = new TraceBuilder("scatter", name);
+    traceBuilder.addTraceData(trace);
+    const trace = traceBuilder.buildTrace();
+    this.plotData.splice(trace, 0, traceID);
+  }
+
   addAxisDimension(axis, data, label, traceID) {
     // get the desired trace to add dimensions to
     let trace = this.plotData[traceID];
@@ -110,8 +117,7 @@ export default class PlotlyInterface {
   }
 
   // type bar
-  addBarChart() {
-  }
+  addBarChart() {}
 
   // type box
   addBoxPLot() {}
