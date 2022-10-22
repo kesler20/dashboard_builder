@@ -8,15 +8,17 @@ import DashboardThemeBtn from "./components/DashboardThemeBtn";
 import DashboardTitle from "./components/DashboardTitle";
 import "./Dashboard.css";
 import layouts from "./layouts";
-import DashboardModel from "./components/DashboardModel";
-import CommandLineModel from "./components/CommandLineModel";
-import PlotlyInterface from "./components/DashboardMetaData";
+import DashboardBuilder from "./components/DashboardBuilder";
+import CommandLineModel, { subOptions } from "./components/CommandLineModel";
 import {
   convertFilesToTabularFormat,
   getUserFileId,
   userFileNames,
   userFiles,
 } from "./components/DataProcessing";
+import TraceBuilder from "./components/TraceBuilder";
+import LayoutBuilder from "./components/LayoutBuilder";
+import PlotlyInterface from "./components/PlotlyInterface";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -43,11 +45,12 @@ const Dashboard = () => {
 
   // dashboard model
   const [dashboardData, setDashboardData] = useState(
-    new DashboardModel(
+    new DashboardBuilder(
       "Default Title",
       [
         {
-          plots: {},
+          plot: {},
+          layout: {},
           dataGrid: { x: 0, y: 0, w: 5, h: 10 },
           tools: {},
         },
@@ -56,22 +59,21 @@ const Dashboard = () => {
       "black"
     )
   );
-
+  // global states
   const [currentAxis, setCurrentAxis] = useState([]);
   const [currentFile, setCurrentFile] = useState("");
   const [tabularFiles, setTabularFiles] = useState({});
-  
-  // this useEffect is used to synchronize the plots to the changes triggered by the user
+
   useEffect(() => {
-    if (currentLayout !== []) {
-      dashboardData.plots.forEach((plotElement, id) => {
-        const { plot } = plotElement;
-        const plotly = new PlotlyInterface(`plot-${id}`)
-        plotly.importTrace(plot,0, plot.name)
-        plotly.constructInitialPlot();
-      });
+    if (currentLayout !== [] && dashboardData.plots[0].plot !== {}) {
+      const { plot, layout } = dashboardData.plots[0];
+      const plotly = new PlotlyInterface("plot-0");
+      plotly.importTrace(plot, 0);
+      plotly.importLayout(layout);
+      console.log(plotly.plotData[0],plotly.layout)
+      plotly.constructInitialPlot();
     }
-  }, [currentLayout]);
+  }, [currentLayout, dashboardData]);
 
   /**
    * Handles the navbar click event of Add Plot, Save/ Edit Dashboard
@@ -104,20 +106,33 @@ const Dashboard = () => {
 
   /**
    * this is triggered when the used selects an option in the hamburger menu dropdown
-   * 
-   * compound updates such a updating the axis 
+   *
+   * compound updates such a updating the axis
    * (an update which requires data from the selection and the selectedOption) can be implemented
    * using an array if there are the right control in plage
    * initially you push one piece of information to the array when the user selects an option form the
    * hamburger menu, then you push the other when the user selects the option from the main drop down menu
-   * 
+   *
    * @param {*} selection - this is the option selected by the user which will be used
    * to change the state of the command line model
    */
   const handleOptionSelected = (selection) => {
+    // update the command line model
     setCommandLineData(commandLineData.changeState(selection));
-    if (selection === "Select X Axis") {
+
+    // update the global variables
+    if (selection === "Select X axis") {
       setCurrentAxis(["x"]);
+    } else if (selection === "Select Y axis") {
+      setCurrentAxis(["y"]);
+    } else if (selection === "Select Z axis") {
+      setCurrentAxis(["z"]);
+    } else if (selection === "Select Color") {
+      setCurrentAxis(["color"]);
+    } else if (selection === "Select Size") {
+      setCurrentAxis(["size"]);
+    } else {
+      console.log(selection);
     }
   };
 
@@ -125,15 +140,107 @@ const Dashboard = () => {
    * this is used to handle the user selection of the options on main drown menu
    * @param {*} selectedOption
    */
-  const handleSubOptionSelected = (selectedOption) => {
+  const handleSubOptionSelected = (selectedOption, id) => {
+    // update the command line model
     setCommandLineData(commandLineData.changeCurrentFile(selectedOption));
+
+    /**
+     * initialize the traceBuilder
+     * initialize the layout builder
+     * and the plot which will be passed to the dashboardBuilder
+     */
+    const traceBuilder = new TraceBuilder("scatter", "test trace");
+    const layoutBuilder = new LayoutBuilder("Test Plot");
+    const { plot, layout } = dashboardData.plots[0];
+
+    // import any existing data from the dashboardBuilder
+    traceBuilder.addTraceData(plot);
+    layoutBuilder.addLayoutData(layout);
+
+    /**
+     * handle user files selection
+     * if the selectedOption is in the fileNames array
+     * update the currentFile global variable
+     * update the tabularFiles with the relevant columns of data
+     * update the layout of the plot with a new title
+     */
     if (userFileNames.indexOf(selectedOption) !== -1) {
       setCurrentFile(selectedOption);
       setTabularFiles(
         convertFilesToTabularFormat(userFiles)[getUserFileId(selectedOption)]
       );
-
+      layoutBuilder.addTitle(selectedOption);
     }
+
+    /**
+     * handle axis selection
+     * check if the selectedOption correspond to one of the columns of the file
+     * to update the axis a compound update is required
+     * therefore the currentAxis is used as selected dimension
+     * if no value was pushed to the currentAxis then this will throw an alert
+     */
+    const columns = Object.keys(tabularFiles);
+    if (columns.indexOf(selectedOption) !== -1) {
+      if (currentAxis.length >= 0) {
+        // get the axis data from one of the columns of the tabularFiles
+        traceBuilder.addAxis(currentAxis[0], tabularFiles[selectedOption]);
+        layoutBuilder.addAxis(currentAxis[0], selectedOption);
+        // control fgr different axis such as color and size
+        // control for different plots such as pie charts
+      }
+    }
+
+    /**
+     * handle plot selection
+     * check if the selectedOption is in the plot array
+     * update the trace builder
+     */
+    if (subOptions["Select a Plot"].indexOf(selectedOption) !== -1) {
+      if (selectedOption === "Scatter Plot") {
+        // add type: scatter, mode : scatter,
+        // and marker circle with an opacity of .8
+        traceBuilder
+          .addMarker("circle")
+          .addMode("markers")
+          .addPlotType("scatter");
+      } else if (selectedOption === "Line Plot") {
+        traceBuilder.addLine().addMode("lines").addPlotType("scatter");
+      } else if (selectedOption === "Pie Chart") {
+        traceBuilder.addPlotType("pie").addHoverInfo("label+percent+name");
+      } else if (selectedOption === "Histogram") {
+        traceBuilder.addPlotType("histogram").addOpacity(0.5);
+      } else if (selectedOption === "Box Plot") {
+        traceBuilder.addPlotType("box").addBoxPoints("all").addUnderlyingData();
+      } else if (selectedOption === "BarChart") {
+        traceBuilder
+          .addPlotType("bar")
+          .addMarker("circle")
+          .addColor("rgb(55,83,109)");
+      } else if (selectedOption === "Heatmap") {
+        traceBuilder.addPlotType("heatmap");
+      } else if (selectedOption === "3D Plot") {
+        traceBuilder
+          .addPlotType("scatter3d")
+          .addMode("markers")
+          .addMarker("circle");
+        layoutBuilder.add3DStyles();
+      }
+    }
+
+    /**
+     * handle the theme of the plot
+     */
+
+    /**
+     * handle the tool selection
+     */
+
+    /**
+     * updating the layout and the plot object of the correct plot
+     */
+    dashboardData.addPlotObject(traceBuilder.buildTrace(), 0);
+    dashboardData.addLayoutObject(layoutBuilder.buildLayout(), 0);
+    setDashboardData(dashboardData.buildDashboard());
   };
 
   return (

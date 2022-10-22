@@ -46,11 +46,16 @@ export default class PlotlyInterface {
     this.layout = layoutBuilder.buildLayout();
   }
 
-  importTrace(trace, traceID, name) {
-    const traceBuilder = new TraceBuilder("scatter", name);
-    traceBuilder.addTraceData(trace);
-    const trace = traceBuilder.buildTrace();
-    this.plotData.splice(trace, 0, traceID);
+  importTrace(trace, traceID) {
+    if (this.plotData.length === 0) {
+      this.plotData = [trace];
+    } else {
+      this.plotData.splice(trace, 0, traceID);
+    }
+  }
+
+  importLayout(layout) {
+    this.layout = layout;
   }
 
   addAxisDimension(axis, data, label, traceID) {
@@ -110,31 +115,6 @@ export default class PlotlyInterface {
     const traceBuilder = new TraceBuilder("scatter");
     traceBuilder.addTraceData(trace).addMode("markers").addMarker("circle");
   }
-
-  // type pie
-  addPieChart() {
-    return;
-  }
-
-  // type bar
-  addBarChart() {}
-
-  // type box
-  addBoxPLot() {}
-
-  // histogram
-  addHistogram() {}
-
-  // contour
-  addContourPLot() {}
-
-  // type histogram2dcontour
-  addHistogram2DContour() {
-    return;
-  }
-
-  // surface
-  addSurfacePlot() {}
 
   /**
    * Build a plot from scratch

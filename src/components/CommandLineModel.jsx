@@ -10,6 +10,32 @@ import {
  */
 var currentFIle;
 
+/**
+ * the subOptions object contains all the arbitrary subOptions
+ * which can be exported to be used in the dashboard
+ */
+export const subOptions = {
+  "Select a Plot": [
+    "Scatter Plot",
+    "Line Plot",
+    "Pie Chart",
+    "Histogram",
+    "Box Plot",
+    "BarChart",
+    "Heatmap",
+    "3D Plot",
+  ],
+  "Select a Theme": [
+    "seaborn",
+    "dark",
+    "light",
+    "gray",
+    "default",
+    "transparent",
+  ],
+  "Select a Tool": ["Data Processing/ Analysis"],
+};
+
 // the following classes represent the various states of the option class
 /**
  * this is the initial state which returns the names of the user files
@@ -26,14 +52,7 @@ class SelectFile {
  */
 class SelectPlot {
   displaySubOptions() {
-    return [
-      "Scatter Plot",
-      "Line Plot",
-      "Pie Chart",
-      "BarChart",
-      "Heatmap",
-      "3D Plot",
-    ];
+    return subOptions["Select a Plot"];
   }
 }
 
@@ -46,7 +65,7 @@ class SelectPlot {
 class SelectAxis {
   displaySubOptions() {
     // if no file has yet been selected by the user return warning
-    if (currentFIle == undefined) return ["Please select a file"];
+    if (currentFIle === undefined) return ["Please select a file"];
 
     // convert all the user files in column arrays
     const readableUserFile = convertFilesToReadableFormat(userFiles);
@@ -66,7 +85,7 @@ class SelectAxis {
  */
 class SelectTheme {
   displaySubOptions() {
-    return ["seaborn", "dark", "light", "gray", "default", "transparent"];
+    return subOptions["Select a Theme"];
   }
 }
 
@@ -76,7 +95,7 @@ class SelectTheme {
  */
 class SelectTool {
   displaySubOptions() {
-    return ["Data Processing/ Analysis"];
+    return subOptions["Select a Tool"];
   }
 }
 

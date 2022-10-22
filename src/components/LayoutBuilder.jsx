@@ -145,6 +145,21 @@ export default class LayoutBuilder {
     return this;
   };
 
+  /**
+   * add the following object:
+   * ```javascript
+   * layout : {
+   *  autosize : true;
+   *  margin : {
+   *    l: 0,
+   *    r: 0,
+   *    b: 30,
+   *    t: 0,
+   *  }
+   * }
+   * ```
+   * @returns this
+   */
   add3DStyles = () => {
     this.layout = {
       ...this.layout,
@@ -261,6 +276,11 @@ export default class LayoutBuilder {
    */
   styleBoxPlot = () => {
     this.layout.boxmode = "group";
+    return this;
+  };
+
+  addTitle = (title) => {
+    this.layout.title = title;
     return this;
   };
 

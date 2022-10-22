@@ -1,6 +1,6 @@
-import PlotlyInterface from "./DashboardMetaData";
+import PlotlyInterface from "./PlotlyInterface";
 
-export default class DashboardModel {
+export default class DashboardBuilder {
   /**
    * the plots (second argument) has the following structure:
    * ```javascript
@@ -29,6 +29,7 @@ export default class DashboardModel {
   addPlot() {
     this.plots.push({
       plot: {},
+      layout: {},
       dataGrid: { x: 0, y: 0, w: 5, h: 10 },
       tools: {},
       plotly: new PlotlyInterface(`plotly-${this.plots.length}`),
@@ -58,8 +59,8 @@ export default class DashboardModel {
     return this;
   }
 
-  buildPlot() {
-    return this.plots;
+  buildDashboard() {
+    return this;
   }
 
   /**
@@ -74,13 +75,15 @@ export default class DashboardModel {
    * ```
    * @param {*} id - the index of the plot within the plots array
    *
-   * @returns this.plots[id]
+   * @returns this
    */
-  getPlot(id) {
-    return this.plots[id].plot;
+  addPlotObject(plot, id) {
+    this.plots[id].plot = plot;
+    return this;
   }
 
-  getPlotlyObject(id) {
-    return this.plots[id].plotly;
+  addLayoutObject(layout, id) {
+    this.plots[id].layout = layout;
+    return this;
   }
 }

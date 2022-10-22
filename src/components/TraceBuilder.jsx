@@ -36,22 +36,6 @@
  */
 export default class TraceBuilder {
   /**
-   * traces can be uniquely identified by their type and the name, this is because traces cannot have two different names
-   * nor they can have two different types
-   * the types of plots that can be made include:
-   * - scatter,
-   * - scattergl,
-   * - scatter3d,
-   * - box,
-   * - pie,
-   * - heatmap,
-   * - bar,
-   * - surface,
-   * - histogram2dcontour,
-   * - contour,
-   * - sunburst,
-   * - pointcloud,
-   * - sankey
    *
    * the default trace that will be built is:
    * ```javascript
@@ -59,6 +43,7 @@ export default class TraceBuilder {
    *   name : name,
    *   type : type
    * }
+   * ```
    * @param {*} type - this can be one from
    * @param {*} name - the name of the trace
    *
@@ -193,6 +178,16 @@ export default class TraceBuilder {
     this.trace.marker.showscale = true;
     return this;
   };
+  
+  /**
+   * add opacity to the trace ``opacity : opacity``
+   * @param {*} opacity - this is a number from 0 to 1
+   * @returns this
+   */
+  addOpacity = (opacity) => {
+    this.trace.opacity = opacity
+    return this;
+  }
 
   /**
    * add a marker from scratch
@@ -210,7 +205,31 @@ export default class TraceBuilder {
     this.trace.marker = {
       opacity: 0.8,
       symbol,
-      };
+    };
+    return this;
+  };
+
+  /**
+   * the types of plots that can be made include:
+   * - scatter,
+   * - scattergl,
+   * - scatter3d,
+   * - box,
+   * - pie,
+   * - heatmap,
+   * - bar,
+   * - surface,
+   * - histogram2dcontour,
+   * - contour,
+   * - sunburst,
+   * - pointcloud,
+   * - sankey
+   *
+   * @param {*} type - this is the type of the plot
+   * @returns this
+   */
+  addPlotType = (type) => {
+    this.trace.type = type;
     return this;
   };
 
@@ -223,7 +242,7 @@ export default class TraceBuilder {
     const desired_maximum_marker_size = 65;
     this.trace.marker = {
       ...this.trace.marker,
-      opacity : 0.6,
+      opacity: 0.6,
       size,
       sizeref: (2.0 * Math.max(...size)) / desired_maximum_marker_size ** 2,
       sizemode: "area",
@@ -383,7 +402,7 @@ export default class TraceBuilder {
       ...this.trace.marker,
       color,
     };
-    return this; 
+    return this;
   };
 
   /**
