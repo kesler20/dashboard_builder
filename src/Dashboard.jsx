@@ -63,17 +63,29 @@ const Dashboard = () => {
   const [currentAxis, setCurrentAxis] = useState([]);
   const [currentFile, setCurrentFile] = useState("");
   const [tabularFiles, setTabularFiles] = useState({});
+  const [currentUserSelection, setCurrentUserSelection] = useState("");
 
   useEffect(() => {
-    if (currentLayout !== [] && dashboardData.plots[0].plot !== {}) {
+    if (currentLayout !== []) {
       const { plot, layout } = dashboardData.plots[0];
       const plotly = new PlotlyInterface("plot-0");
       plotly.importTrace(plot, 0);
       plotly.importLayout(layout);
-      console.log(plotly.plotData[0],plotly.layout)
+      console.log(plotly.plotData[0], plotly.layout);
       plotly.constructInitialPlot();
     }
-  }, [currentLayout, dashboardData]);
+  }, [currentLayout]);
+
+  useEffect(() => {
+    if (currentUserSelection !== "") {
+      const { plot, layout } = dashboardData.plots[0];
+      const plotly = new PlotlyInterface("plot-0");
+      plotly.importTrace(plot, 0);
+      plotly.importLayout(layout);
+      console.log(plotly.plotData[0], plotly.layout);
+      plotly.constructInitialPlot();
+    }
+  }, [currentUserSelection]);
 
   /**
    * Handles the navbar click event of Add Plot, Save/ Edit Dashboard
@@ -134,6 +146,9 @@ const Dashboard = () => {
     } else {
       console.log(selection);
     }
+
+    // update state
+    setCurrentUserSelection(selection);
   };
 
   /**
@@ -241,6 +256,8 @@ const Dashboard = () => {
     dashboardData.addPlotObject(traceBuilder.buildTrace(), 0);
     dashboardData.addLayoutObject(layoutBuilder.buildLayout(), 0);
     setDashboardData(dashboardData.buildDashboard());
+    // update state
+    setCurrentUserSelection(selectedOption);
   };
 
   return (
