@@ -9,7 +9,6 @@ import PlotCommandLine from "./plot_command_line/PlotCommandLine";
  *  @see section on custom components from  https://github.com/react-grid-layout/react-grid-layout
  */
 const PlotComponent = forwardRef(({ style, className, ...props }, ref) => {
-
   return (
     // display the plot with the command line and the handle if the viewMode is edit, otherwise display the plot
     <div>
@@ -25,13 +24,15 @@ const PlotComponent = forwardRef(({ style, className, ...props }, ref) => {
             <React.Fragment>
               <PlotCommandLine
                 onOptionSelected={props.onOptionSelected}
-                onSubOptionSelected={props.onSubOptionSelected}
+                onSubOptionSelected={(selectedOption) =>
+                  props.onSubOptionSelected(selectedOption, props.plotID)
+                }
                 commandLineData={props.commandLineData}
                 onDeleteBtnClicked={() =>
                   props.onRemoveBtnClicked(props.plotID)
                 }
               />
-              <p className="color-text">Color</p>
+              {/* <p className="color-text">Color</p> */}
               {props.children[1]}
             </React.Fragment>
           }

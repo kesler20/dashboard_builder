@@ -1,16 +1,16 @@
-export default {
+const initialLayout = {
   lg: [
     {
-      w: 8,
-      h: 2,
+      w: 4,
+      h: 3,
       x: 0,
       y: 0,
       i: "0",
     },
     {
       w: 4,
-      h: 2,
-      x: 8,
+      h: 3,
+      x: 5,
       y: 0,
       i: "1",
     },
@@ -18,16 +18,16 @@ export default {
 
   md: [
     {
-      w: 6,
-      h: 2,
+      w: 4,
+      h: 3,
       x: 0,
       y: 0,
       i: "0",
     },
     {
       w: 4,
-      h: 2,
-      x: 6,
+      h: 3,
+      x: 5,
       y: 0,
       i: "1",
     },
@@ -35,16 +35,16 @@ export default {
 
   sm: [
     {
-      w: 6,
-      h: 2,
+      w: 4,
+      h: 3,
       x: 0,
       y: 0,
       i: "0",
     },
     {
-      w: 3,
-      h: 2,
-      x: 0,
+      w: 4,
+      h: 3,
+      x: 4,
       y: 0,
       i: "1",
     },
@@ -67,3 +67,5 @@ export default {
     },
   ],
 };
+
+export default initialLayout;

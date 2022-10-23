@@ -1,4 +1,3 @@
-import PlotlyInterface from "./PlotlyInterface";
 
 export default class DashboardBuilder {
   /**
@@ -30,9 +29,8 @@ export default class DashboardBuilder {
     this.plots.push({
       plot: {},
       layout: {},
-      dataGrid: { x: 0, y: 0, w: 5, h: 10 },
+      dataGrid: { x: 4, y: 0, w: 4, h: 4 },
       tools: {},
-      plotly: new PlotlyInterface(`plotly-${this.plots.length}`),
     });
     return this;
   }

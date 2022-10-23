@@ -10,3 +10,4 @@ todos
 - allow dashboard to save
 - think about all the different plots that you could include
 
+- add object to layout.js when a new object is added to the dashboard array

@@ -7,7 +7,7 @@ import Nav from "./components/dashboard_speedial/Nav";
 import DashboardThemeBtn from "./components/DashboardThemeBtn";
 import DashboardTitle from "./components/DashboardTitle";
 import "./Dashboard.css";
-import layouts from "./layouts";
+import initialLayout from "./layouts";
 import DashboardBuilder from "./components/DashboardBuilder";
 import CommandLineModel, { subOptions } from "./components/CommandLineModel";
 import {
@@ -21,6 +21,20 @@ import LayoutBuilder from "./components/LayoutBuilder";
 import PlotlyInterface from "./components/PlotlyInterface";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
+
+const initialDashboard = new DashboardBuilder(
+  "Default Title",
+  [
+    {
+      plot: {},
+      layout: {},
+      dataGrid: { x: 0, y: 0, w: 4, h: 4 },
+      tools: {},
+    },
+  ],
+  "white",
+  "black"
+);
 
 /**
  * The Dashboard container is used to manipulate the data within the Dashboard page
@@ -44,21 +58,7 @@ const Dashboard = () => {
   );
 
   // dashboard model
-  const [dashboardData, setDashboardData] = useState(
-    new DashboardBuilder(
-      "Default Title",
-      [
-        {
-          plot: {},
-          layout: {},
-          dataGrid: { x: 0, y: 0, w: 5, h: 10 },
-          tools: {},
-        },
-      ],
-      "white",
-      "black"
-    )
-  );
+  const [dashboardData, setDashboardData] = useState(initialDashboard);
   // global states
   // const [currentFile, setCurrentFile] = useState("");
   const [currentAxis, setCurrentAxis] = useState([]);
@@ -73,23 +73,25 @@ const Dashboard = () => {
       currentLayout !== [] ||
       currentUserSelection !== "" ||
       theme !== true ||
-      dashboardData.plots[0].title !== "Default Title" ||
+      dashboardData !== initialDashboard ||
       mode !== "edit"
     ) {
-      const { plot, layout } = dashboardData.plots[0];
-      const plotly = new PlotlyInterface("plot-0");
-      plotly.importTrace(plot, 0);
-      plotly.importLayout(layout);
-      if (mode !== "edit") {
-        plotly.removeModeBar();
-      }
+      dashboardData.plots.forEach((plt, plotID) => {
+        const { plot, layout } = plt;
+        const plotly = new PlotlyInterface(`plot-${plotID}`);
+        plotly.importTrace(plot, 0);
+        plotly.importLayout(layout);
+        if (mode !== "edit") {
+          plotly.removeModeBar();
+        }
 
-      if (plot.z !== undefined) {
-        plotly.addZoomScroll();
-      }
-      plotly.constructInitialPlot();
+        if (plot.z !== undefined) {
+          plotly.addZoomScroll();
+        }
+        plotly.constructInitialPlot();
+      });
     }
-  }, [currentLayout, currentUserSelection, theme, dashboardData.plots, mode]);
+  }, [currentLayout, currentUserSelection, theme, dashboardData, mode]);
 
   /**
    * Handles the navbar click event of Add Plot, Save/ Edit Dashboard
@@ -117,7 +119,7 @@ const Dashboard = () => {
    * @param {*} plotKey - the index of the plot in the dashboard
    */
   const handleRemovePlot = (plotKey) => {
-    dashboardData.removePlot(plotKey);
+    setDashboardData(dashboardData.removePlot(plotKey));
   };
 
   /**
@@ -159,7 +161,7 @@ const Dashboard = () => {
    * this is used to handle the user selection of the options on main drown menu
    * @param {*} selectedOption
    */
-  const handleSubOptionSelected = (selectedOption, id) => {
+  const handleSubOptionSelected = (selectedOption, plotID) => {
     // update the command line model
     setCommandLineData(commandLineData.changeCurrentFile(selectedOption));
 
@@ -170,7 +172,7 @@ const Dashboard = () => {
      */
     const traceBuilder = new TraceBuilder("scatter", "test trace");
     const layoutBuilder = new LayoutBuilder("Test Plot");
-    const { plot, layout } = dashboardData.plots[0];
+    const { plot, layout } = dashboardData.plots[plotID];
 
     // import any existing data from the dashboardBuilder
     traceBuilder.addTraceData(plot);
@@ -325,8 +327,8 @@ const Dashboard = () => {
     /**
      * updating the layout and the plot object of the correct plot
      */
-    dashboardData.addPlotObject(traceBuilder.buildTrace(), 0);
-    dashboardData.addLayoutObject(layoutBuilder.buildLayout(), 0);
+    dashboardData.addPlotObject(traceBuilder.buildTrace(), plotID);
+    dashboardData.addLayoutObject(layoutBuilder.buildLayout(), plotID);
     setDashboardData(dashboardData.buildDashboard());
     // update state
     setCurrentUserSelection(selectedOption);
@@ -358,7 +360,7 @@ const Dashboard = () => {
           {/* grid layout */}
           <ResponsiveGridLayout
             className="layout"
-            layouts={layouts}
+            layouts={initialLayout}
             onLayoutChange={setCurrentLayout}
             breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
             cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
