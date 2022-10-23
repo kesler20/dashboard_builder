@@ -282,9 +282,9 @@ const Dashboard = () => {
         paperBgColor = "white";
         gridColor = "blue";
       } else if (selectedOption === "dark") {
-        backgroundColor = "1B2444";
-        paperBgColor = "1B2444";
-        gridColor = "#768DB7";
+        backgroundColor = "#1b2444";
+        paperBgColor = "#1b2444";
+        gridColor = "#768db7";
       } else {
         backgroundColor = "gray";
         paperBgColor = "white";
