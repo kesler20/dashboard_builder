@@ -60,43 +60,37 @@ const Dashboard = () => {
     )
   );
   // global states
+  // const [currentFile, setCurrentFile] = useState("");
   const [currentAxis, setCurrentAxis] = useState([]);
-  const [currentFile, setCurrentFile] = useState("");
   const [tabularFiles, setTabularFiles] = useState({});
   const [currentUserSelection, setCurrentUserSelection] = useState("");
 
+  /**
+   * main useEffect to synchronize the state of the dashboard with each event
+   */
   useEffect(() => {
-    if (currentLayout !== []) {
+    if (
+      currentLayout !== [] ||
+      currentUserSelection !== "" ||
+      theme !== true ||
+      dashboardData.plots[0].title !== "Default Title" ||
+      mode !== "edit"
+    ) {
       const { plot, layout } = dashboardData.plots[0];
       const plotly = new PlotlyInterface("plot-0");
       plotly.importTrace(plot, 0);
       plotly.importLayout(layout);
-      console.log(plotly.plotData[0], plotly.layout);
-      plotly.constructInitialPlot();
-    }
-  }, [currentLayout]);
+      if (mode !== "edit") {
+        plotly.removeModeBar();
+      }
 
-  useEffect(() => {
-    if (currentUserSelection !== "") {
-      const { plot, layout } = dashboardData.plots[0];
-      const plotly = new PlotlyInterface("plot-0");
-      plotly.importTrace(plot, 0);
-      plotly.importLayout(layout);
+      if (plot.z !== undefined) {
+        plotly.addZoomScroll();
+      }
       console.log(plotly.plotData[0], plotly.layout);
       plotly.constructInitialPlot();
     }
-  }, [currentUserSelection]);
-
-  useEffect(() => {
-    if (theme !== true) {
-      const { plot, layout } = dashboardData.plots[0];
-      const plotly = new PlotlyInterface("plot-0");
-      plotly.importTrace(plot, 0);
-      plotly.importLayout(layout);
-      console.log(plotly.plotData[0], plotly.layout);
-      plotly.constructInitialPlot();
-    }
-  }, [theme]);
+  }, [currentLayout, currentUserSelection, theme, dashboardData.plots, mode]);
 
   /**
    * Handles the navbar click event of Add Plot, Save/ Edit Dashboard
@@ -191,7 +185,7 @@ const Dashboard = () => {
      * update the layout of the plot with a new title
      */
     if (userFileNames.indexOf(selectedOption) !== -1) {
-      setCurrentFile(selectedOption);
+      // setCurrentFile(selectedOption);
       setTabularFiles(
         convertFilesToTabularFormat(userFiles)[getUserFileId(selectedOption)]
       );
@@ -209,10 +203,17 @@ const Dashboard = () => {
     if (columns.indexOf(selectedOption) !== -1) {
       if (currentAxis.length >= 0) {
         // get the axis data from one of the columns of the tabularFiles
-        traceBuilder.addAxis(currentAxis[0], tabularFiles[selectedOption]);
-        layoutBuilder.addAxis(currentAxis[0], selectedOption);
-        // control fgr different axis such as color and size
-        // control for different plots such as pie charts
+        if (currentAxis[0] === "color") {
+          traceBuilder
+            .addColor(tabularFiles[selectedOption])
+            .addColorScale()
+            .changeColorScale("Jet");
+        } else if (currentAxis[0] === "size") {
+          traceBuilder.addRelativeSizeToMarkers(tabularFiles[selectedOption]);
+        } else {
+          traceBuilder.addAxis(currentAxis[0], tabularFiles[selectedOption]);
+          layoutBuilder.addAxis(currentAxis[0], selectedOption);
+        }
       }
     }
 
@@ -233,6 +234,9 @@ const Dashboard = () => {
       } else if (selectedOption === "Line Plot") {
         traceBuilder.addLine().addMode("lines").addPlotType("scatter");
       } else if (selectedOption === "Pie Chart") {
+        traceBuilder
+          .addValues(traceBuilder.buildTrace().x)
+          .addLabels(traceBuilder.buildTrace().y);
         traceBuilder.addPlotType("pie").addHoverInfo("label+percent+name");
       } else if (selectedOption === "Histogram") {
         traceBuilder.addPlotType("histogram").addOpacity(0.5);

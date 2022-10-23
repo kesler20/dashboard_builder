@@ -168,7 +168,7 @@ export default class LayoutBuilder {
         l: 0,
         r: 0,
         b: 30,
-        t: 0,
+        t: 30,
       },
     };
     return this;

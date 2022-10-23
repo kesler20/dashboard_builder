@@ -46,6 +46,10 @@ export default class PlotlyInterface {
     this.layout = layoutBuilder.buildLayout();
   }
 
+  addZoomScroll() {
+    this.config.scrollZoom = true;
+  }
+
   importTrace(trace, traceID) {
     if (this.plotData.length === 0) {
       this.plotData = [trace];
@@ -162,6 +166,10 @@ export default class PlotlyInterface {
         },
       });
     }
+  }
+
+  removeModeBar() {
+    this.config.displayModeBar = false;
   }
 
   // unlike the update initial plot function the update plot will update the plot in place
