@@ -155,7 +155,8 @@ export default class TraceBuilder {
     this.trace.marker = {
       ...this.trace.marker,
       line: {
-        width: "5",
+        color: "white",
+        width: "2",
       },
     };
     return this;
@@ -178,16 +179,16 @@ export default class TraceBuilder {
     this.trace.marker.showscale = true;
     return this;
   };
-  
+
   /**
    * add opacity to the trace ``opacity : opacity``
    * @param {*} opacity - this is a number from 0 to 1
    * @returns this
    */
   addOpacity = (opacity) => {
-    this.trace.opacity = opacity
+    this.trace.opacity = opacity;
     return this;
-  }
+  };
 
   /**
    * add a marker from scratch
@@ -203,7 +204,8 @@ export default class TraceBuilder {
   addMarker = (symbol) => {
     symbol = symbol === undefined ? "circle" : symbol;
     this.trace.marker = {
-      opacity: 0.8,
+      opacity: 0.6,
+      size: 16,
       symbol,
     };
     return this;

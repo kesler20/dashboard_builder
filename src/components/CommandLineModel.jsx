@@ -30,6 +30,7 @@ export const subOptions = {
     "light",
     "gray",
     "default",
+    "seaborn",
     "transparent",
   ],
   "Select a Tool": ["Data Processing/ Analysis"],

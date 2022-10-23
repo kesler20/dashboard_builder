@@ -214,6 +214,12 @@ export default class LayoutBuilder {
     return this;
   };
 
+  addZeroLine = (axis, color) => {
+    this.updateAxis(axis, "zeroline", true)
+    this.updateAxis(axis, "zerolinecolor", color)
+    return this;
+  }
+
   /**
    * this.layout adds a legend by adding the following object to the body
    * of the layout:

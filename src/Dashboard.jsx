@@ -228,6 +228,7 @@ const Dashboard = () => {
         traceBuilder
           .addMarker("circle")
           .addMode("markers")
+          .addMarkerLine()
           .addPlotType("scatter");
       } else if (selectedOption === "Line Plot") {
         traceBuilder.addLine().addMode("lines").addPlotType("scatter");
@@ -267,28 +268,46 @@ const Dashboard = () => {
         paperBgColor = theme
           ? dashboardData.bgColor
           : dashboardData.darkBgColor;
-        gridColor = theme ? "blue" : "white";
+        gridColor = theme ? dashboardData.bgColor : dashboardData.darkBgColor;
+        layoutBuilder.removeZeroLine("x").removeZeroLine("y");
+        layoutBuilder.styleFont(gridColor, "Arial, sans-serif", 14);
         // update the theme
       } else if (selectedOption === "default") {
-        backgroundColor = "#e5ecf6";
-        paperBgColor = "white";
-        gridColor = "white";
+        backgroundColor = "#eaeaf2";
+        paperBgColor = "#eaeaf2";
+        gridColor = "#d6dde6";
+        layoutBuilder.addZeroLine("x", gridColor).addZeroLine("y", gridColor);
+        layoutBuilder.styleFont("black", "Arial, sans-serif", 14);
       } else if (selectedOption === "light") {
         backgroundColor = "white";
         paperBgColor = "white";
-        gridColor = "gray";
+        gridColor = "#d6dde6";
+        layoutBuilder.styleFont("black", "Arial, sans-serif", 14);
+        layoutBuilder.addZeroLine("x", gridColor).addZeroLine("y", gridColor);
       } else if (selectedOption === "gray") {
-        backgroundColor = "gray";
-        paperBgColor = "white";
-        gridColor = "blue";
+        backgroundColor = "#e5ecf6";
+        paperBgColor = "#e5ecf6";
+        gridColor = "#d6dde6";
+        layoutBuilder.styleFont("black", "Arial, sans-serif", 14);
+        layoutBuilder.addZeroLine("x", gridColor).addZeroLine("y", gridColor);
       } else if (selectedOption === "dark") {
         backgroundColor = "#1b2444";
         paperBgColor = "#1b2444";
         gridColor = "#768db7";
+        layoutBuilder.styleFont("#33ffe6", "Arial, sans-serif", 14);
+        layoutBuilder.addZeroLine("x", gridColor).addZeroLine("y", gridColor);
+      } else if (selectedOption === "seaborn") {
+        backgroundColor = "#e5ecf6";
+        paperBgColor = "white";
+        gridColor = "white";
+        layoutBuilder.addZeroLine("x", gridColor).addZeroLine("y", gridColor);
+        layoutBuilder.styleFont("black", "Arial, sans-serif", 14);
       } else {
         backgroundColor = "gray";
         paperBgColor = "white";
         gridColor = "white";
+        layoutBuilder.addZeroLine("x", gridColor).addZeroLine("y", gridColor);
+        layoutBuilder.styleFont("black", "Arial, sans-serif", 14);
       }
       layoutBuilder.styleBgColor(paperBgColor, backgroundColor);
       layoutBuilder.addGrid(gridColor, "x");
