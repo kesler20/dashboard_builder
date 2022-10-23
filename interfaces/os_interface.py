@@ -126,16 +126,21 @@ class OperatingSystemInterface(object):
         return result
 
 
-# now you can push all of the changes to github within the protocol folder as follows
-for dir in os.listdir(r"C:\Users\Uchek\protocol"):
-    if dir == "jaguar":
-        pass 
-    else:
-        with OperatingSystemInterface(os.path.join(r"C:\Users\Uchek\protocol", dir)) as op_sys:
-            # simulate that you are in the sofia silent folder
-            osi = OperatingSystemInterface(os.path.join(r"C:\Users\Uchek\protocol", dir))
-            op_sys.system("mkdir interfaces")
-            op_sys.system("echo > os_interface.py")
+if __name__ == "__main__":
+    # now you can push all of the changes to github within the protocol folder as follows
+    for dir in os.listdir(r"C:\Users\Uchek\protocol"):
+        if dir == "jaguar":
+            pass
+        else:
+            with OperatingSystemInterface(os.path.join(r"C:\Users\Uchek\protocol", dir)) as op_sys:
+                # simulate that you are in the sofia silent folder
+                op_sys.system("mkdir interfaces")
+                op_sys.system("echo > os_interface.py")
+            osi = OperatingSystemInterface(
+                os.path.join(r"C:\Users\Uchek\protocol", dir))
             osi.copy_file_from_folder(r"interfaces\os_interface.py")
             osi.copy_file_from_folder("workflow.py")
+
+    for dir in os.listdir(r"C:\Users\Uchek\protocol"):
+        with OperatingSystemInterface(os.path.join(r"C:\Users\Uchek\protocol", dir)) as op_sys:
             op_sys.system("python workflow.py g")
