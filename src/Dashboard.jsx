@@ -87,7 +87,6 @@ const Dashboard = () => {
       if (plot.z !== undefined) {
         plotly.addZoomScroll();
       }
-      console.log(plotly.plotData[0], plotly.layout);
       plotly.constructInitialPlot();
     }
   }, [currentLayout, currentUserSelection, theme, dashboardData.plots, mode]);
@@ -230,7 +229,8 @@ const Dashboard = () => {
           .addMarker("circle")
           .addMode("markers")
           .addMarkerLine()
-          .addPlotType("scatter");
+          .addPlotType("scatter")
+          .addMarkerSize(18);
       } else if (selectedOption === "Line Plot") {
         traceBuilder.addLine().addMode("lines").addPlotType("scatter");
       } else if (selectedOption === "Pie Chart") {
@@ -239,7 +239,7 @@ const Dashboard = () => {
           .addLabels(traceBuilder.buildTrace().y);
         traceBuilder.addPlotType("pie").addHoverInfo("label+percent+name");
       } else if (selectedOption === "Histogram") {
-        traceBuilder.addPlotType("histogram").addOpacity(0.5);
+        traceBuilder.addTraceData({}).addPlotType("histogram").addOpacity(0.5);
       } else if (selectedOption === "Box Plot") {
         traceBuilder.addPlotType("box").addBoxPoints("all").addUnderlyingData();
       } else if (selectedOption === "BarChart") {
@@ -248,13 +248,13 @@ const Dashboard = () => {
           .addMarker("circle")
           .addColor("rgb(55,83,109)");
       } else if (selectedOption === "Heatmap") {
-        traceBuilder.addPlotType("heatmap");
+        traceBuilder.addTraceData({}).addPlotType("heatmap");
       } else if (selectedOption === "3D Plot") {
         traceBuilder
           .addPlotType("scatter3d")
           .addMode("markers")
-          .addMarker("circle");
-        layoutBuilder.add3DStyles();
+          .addMarker("circle")
+          .add3DStyles();
       }
     }
 
@@ -397,3 +397,4 @@ export default Dashboard;
 //TODO: perhaps add a preview mode ?
 //TODO: simplify the architecture by having a single source of truth on the dashboard structures
 // TODO: pass dashboard structure as a prop
+// TODO: once that you change the state the changes remain, find a solution which does not remember the previous selections

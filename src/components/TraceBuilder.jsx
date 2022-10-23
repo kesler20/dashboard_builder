@@ -204,9 +204,17 @@ export default class TraceBuilder {
   addMarker = (symbol) => {
     symbol = symbol === undefined ? "circle" : symbol;
     this.trace.marker = {
-      opacity: 0.6,
-      size: 16,
+      opacity: 0.7,
+      size: 14,
       symbol,
+    };
+    return this;
+  };
+
+  addMarkerSize = (size) => {
+    this.trace.marker = {
+      ...this.trace.marker,
+      size,
     };
     return this;
   };
