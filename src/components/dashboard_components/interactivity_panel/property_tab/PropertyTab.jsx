@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import CustomizedSlider from "../../slider/Slider";
+import CustomizedSlider from "../../../slider/Slider";
 import SelectToolBar from "./select_tool_bar/SelectToolBar";
-import DatabaseApi from "../../../apis/DatabaseApi";
-import { userFiles } from "../../DataProcessing";
+import DatabaseApi from "../../../../apis/DatabaseApi";
 import {
+  userFiles,
   convertFilesToTabularFormat,
   getUserFileId,
-} from "../../DataProcessing";
+} from "../../../../models/DataProcessing";
 
 const currentColor = "blue";
 

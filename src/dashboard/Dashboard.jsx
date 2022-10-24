@@ -2,25 +2,27 @@ import React, { useState, useEffect } from "react";
 import "/node_modules/react-grid-layout/css/styles.css";
 import "/node_modules/react-resizable/css/styles.css";
 import { Responsive, WidthProvider } from "react-grid-layout";
-import PlotComponent from "./components/PlotComponent";
-import Nav from "./components/dashboard_speedial/Nav";
-import DashboardThemeBtn from "./components/DashboardThemeBtn";
-import DashboardTitle from "./components/DashboardTitle";
+import PlotComponent from "../components/dashboard_components/PlotComponent";
+import Nav from "../components/dashboard_components/dashboard_speedial/Nav";
+import DashboardThemeBtn from "../components/dashboard_components/DashboardThemeBtn";
+import DashboardTitle from "../components/dashboard_components/DashboardTitle";
 import "./Dashboard.css";
 import initialLayout from "./layouts";
-import DashboardBuilder from "./components/DashboardBuilder";
-import CommandLineModel, { subOptions } from "./components/CommandLineModel";
+import DashboardBuilder from "../models/DashboardBuilder";
+import CommandLineModel, { subOptions } from "../models/CommandLineModel";
+
 import {
   convertFilesToTabularFormat,
   getUserFileId,
   userFileNames,
   userFiles,
-} from "./components/DataProcessing";
-import TraceBuilder from "./components/TraceBuilder";
-import LayoutBuilder from "./components/LayoutBuilder";
-import PlotlyInterface from "./components/PlotlyInterface";
-import InteractivityPanel from "./components/interactivity_panel/InteractivityPanel";
-import DatabaseApi from "./apis/DatabaseApi";
+} from "../models/DataProcessing";
+
+import TraceBuilder from "../models/TraceBuilder";
+import LayoutBuilder from "../models/LayoutBuilder";
+import PlotlyInterface from "../models/PlotlyInterface";
+import InteractivityPanel from "../components/dashboard_components/interactivity_panel/InteractivityPanel";
+import DatabaseApi from "../apis/DatabaseApi";
 
 const db = new DatabaseApi("jobs");
 const ResponsiveGridLayout = WidthProvider(Responsive);

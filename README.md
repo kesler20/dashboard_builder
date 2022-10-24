@@ -20,6 +20,8 @@ not nice, make sre to include something line a theme selector and a filename sel
 - add new tools
 - add all the plots which plotly is capable of handling
 - rename things
+- there is no way to remove the tools once they have been selected
+- the tools are not saved
 
 ```javascript
 plotly.addPlotTitle(currentFile);
