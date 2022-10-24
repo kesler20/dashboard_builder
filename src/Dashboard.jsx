@@ -20,7 +20,9 @@ import TraceBuilder from "./components/TraceBuilder";
 import LayoutBuilder from "./components/LayoutBuilder";
 import PlotlyInterface from "./components/PlotlyInterface";
 import InteractivityPanel from "./components/interactivity_panel/InteractivityPanel";
+import DatabaseApi from "./apis/DatabaseApi";
 
+const db = new DatabaseApi("jobs");
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 // design decisions
@@ -81,6 +83,10 @@ const Dashboard = () => {
   const [tabularFiles, setTabularFiles] = useState({});
   const [currentUserSelection, setCurrentUserSelection] = useState("");
 
+  useEffect(() => {
+    setDashboardData(db.readResourceFromLocalStorage("dashboard"));
+  }, []);
+
   /**
    * main useEffect to synchronize the state of the dashboard with each event
    */
@@ -129,6 +135,7 @@ const Dashboard = () => {
       setDashboardData(dashboardData.addTool());
     } else if (btnName === "Save Dashboard") {
       setMode("save");
+      db.saveResourceToLocalStorage("dashboard", dashboardData);
     } else if (btnName === "Edit Dashboard") {
       setMode("edit");
     } else {
