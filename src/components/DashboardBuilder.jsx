@@ -21,7 +21,7 @@ export default class DashboardBuilder {
   constructor(title, plots, bgColor, darkBgColor) {
     this.title = title;
     this.plots = plots;
-    this.bgColor = bgColor; // this is the background color of the dashboard
+    this.bgColor = bgColor;
     this.darkBgColor = darkBgColor;
   }
 
@@ -31,6 +31,16 @@ export default class DashboardBuilder {
       layout: {},
       dataGrid: { x: 4, y: 0, w: 4, h: 4 },
       tools: {},
+    });
+    return this;
+  }
+
+  addTool() {
+    this.plots.push({
+      plot: {},
+      layout: {},
+      dataGrid: { x: 4, y: 0, w: 4, h: 4 },
+      tools: { name : "tool" },
     });
     return this;
   }

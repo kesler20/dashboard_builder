@@ -19,21 +19,37 @@ import {
 import TraceBuilder from "./components/TraceBuilder";
 import LayoutBuilder from "./components/LayoutBuilder";
 import PlotlyInterface from "./components/PlotlyInterface";
+import InteractivityPanel from "./components/interactivity_panel/InteractivityPanel";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
+// design decisions
+// to add a tool add another object to the potMetadata array with a name property of tool
+// the name of tools will allow us to expand the addResizableComponent function depending on the name of the tool
+// thereby allowing us to add various tools
+// this is done when the add tool speedial button is clicked in the handleNavBtnClicked method
+// this is becuase if the tool object in the plotMetadata array is empty, a plotComponent will be displayed
+// otherwise an interactivity panel will be returned by the addResizableComponent function
+
+// use the following or get them from the database
+const initialDashboardTitle = "Default Title";
+const initialDashboardMetadata = [
+  {
+    plot: {},
+    layout: {},
+    dataGrid: { x: 0, y: 0, w: 4, h: 4 },
+    tools: {},
+  },
+];
+const initialDashboardBg = "white";
+const initialDashboardDarkBg = "black";
+
+// initialize the dashboard builder
 const initialDashboard = new DashboardBuilder(
-  "Default Title",
-  [
-    {
-      plot: {},
-      layout: {},
-      dataGrid: { x: 0, y: 0, w: 4, h: 4 },
-      tools: {},
-    },
-  ],
-  "white",
-  "black"
+  initialDashboardTitle,
+  initialDashboardMetadata,
+  initialDashboardBg,
+  initialDashboardDarkBg
 );
 
 /**
@@ -69,6 +85,7 @@ const Dashboard = () => {
    * main useEffect to synchronize the state of the dashboard with each event
    */
   useEffect(() => {
+    console.log(dashboardData);
     if (
       currentLayout !== [] ||
       currentUserSelection !== "" ||
@@ -78,17 +95,20 @@ const Dashboard = () => {
     ) {
       dashboardData.plots.forEach((plt, plotID) => {
         const { plot, layout } = plt;
-        const plotly = new PlotlyInterface(`plot-${plotID}`);
-        plotly.importTrace(plot, 0);
-        plotly.importLayout(layout);
-        if (mode !== "edit") {
-          plotly.removeModeBar();
+        try {
+          const plotly = new PlotlyInterface(`plot-${plotID}`);
+          plotly.importTrace(plot, 0);
+          plotly.importLayout(layout);
+          if (mode !== "edit") {
+            plotly.removeModeBar();
+          }
+          if (plot.z !== undefined) {
+            plotly.addZoomScroll();
+          }
+          plotly.constructInitialPlot();
+        } catch (e) {
+          console.log(e);
         }
-
-        if (plot.z !== undefined) {
-          plotly.addZoomScroll();
-        }
-        plotly.constructInitialPlot();
       });
     }
   }, [currentLayout, currentUserSelection, theme, dashboardData, mode]);
@@ -105,6 +125,8 @@ const Dashboard = () => {
   const handleNavBtnClicked = (btnName) => {
     if (btnName === "Add Plot") {
       setDashboardData(dashboardData.addPlot());
+    } else if (btnName === "Add Tools") {
+      setDashboardData(dashboardData.addTool());
     } else if (btnName === "Save Dashboard") {
       setMode("save");
     } else if (btnName === "Edit Dashboard") {
@@ -334,6 +356,82 @@ const Dashboard = () => {
     setCurrentUserSelection(selectedOption);
   };
 
+  /**
+   * this takes the userFiles, converts it to tabularFiles, filters the tabular files
+   * and updates the state tabularFiles
+   * @param {*} property - a string indicating which column to apply the transformation too
+   * @param {*} value - a number indicating what will be filtered above too
+   */
+  const filterAbove = (property, value) => {
+    console.log(property, value);
+  };
+
+  /**
+   * this takes the userFiles, converts it to tabularFiles, filters the tabular files
+   * and updates the state tabularFiles
+   * @param {*} property - a string indicating which column to apply the transformation too
+   * @param {*} value - a number indicating what will be filtered above too
+   */
+  const filterBelow = (property, value) => {
+    console.log(property, value);
+  };
+
+  /**
+   * this method is used to select whether a plot object or an interactive tool should be added to the grid layout
+   * @param {*} object - this is a string, when the string is "plot"
+   * a plot component will be returned else an interactivity tool
+   * @param {*} objectProps - this is an object which should have
+   * all the props used by the component that is returned the object should have the following properties:
+   * - id,
+   * - dataGrid,
+   * -  mode,
+   * -  plot,
+   * -  handleRemovePlot,
+   * -  commandLineData,
+   * -  handleOptionSelected,
+   * -  handleSubOptionSelected,
+   * @returns ``<PlotComponent/> / <InteractivityPanel/>``
+   */
+  const addResizableComponent = (object, objectProps) => {
+    const {
+      id,
+      dataGrid,
+      mode,
+      plot,
+      handleRemovePlot,
+      commandLineData,
+      handleOptionSelected,
+      handleSubOptionSelected,
+      tabularFiles,
+    } = objectProps;
+
+    return object === "plot" ? (
+      <PlotComponent
+        // required props for react, react grid layout, plotly
+        key={id}
+        data-grid={dataGrid}
+        plotID={id}
+        // representational properties
+        viewMode={mode}
+        // structural properties
+        data={plot}
+        onRemoveBtnClicked={handleRemovePlot}
+        // data processing properties
+        commandLineData={commandLineData}
+        onOptionSelected={handleOptionSelected}
+        onSubOptionSelected={handleSubOptionSelected}
+      />
+    ) : (
+      <InteractivityPanel
+        key={id}
+        tabularFiles={tabularFiles}
+        filterAbove={filterAbove}
+        filterBelow={filterBelow}
+        viewMode={mode}
+      />
+    );
+  };
+
   return (
     <div>
       <div className="flex-column">
@@ -366,27 +464,27 @@ const Dashboard = () => {
             cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
           >
             {dashboardData.plots.map((plotMetadata, id) => {
-              const { plot, dataGrid } = plotMetadata;
-              return (
-                <PlotComponent
-                  // required props for react, react grid layout, plotly
-                  key={id}
-                  data-grid={dataGrid}
-                  plotID={id}
-                  // representational properties
-                  viewMode={mode}
-                  // structural properties
-                  data={plot}
-                  onRemoveBtnClicked={handleRemovePlot}
-                  // data processing properties
-                  commandLineData={commandLineData}
-                  onOptionSelected={handleOptionSelected}
-                  onSubOptionSelected={handleSubOptionSelected}
-                />
-              );
+              const { plot, dataGrid, tools } = plotMetadata;
+              const objectProps = {
+                id,
+                dataGrid,
+                mode,
+                plot,
+                handleRemovePlot,
+                commandLineData,
+                handleOptionSelected,
+                handleSubOptionSelected,
+                tabularFiles,
+              };
+              if (Object.keys(tools).length === 0) {
+                return addResizableComponent("plot", objectProps);
+              } else {
+                return addResizableComponent(tools.name, objectProps);
+              }
             })}
           </ResponsiveGridLayout>
         </div>
+
         {/* dashboard speed dial */}
         <Nav onNavBtnClicked={(btnName) => handleNavBtnClicked(btnName)} />
       </div>

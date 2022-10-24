@@ -1,8 +1,14 @@
 import React, { useState } from "react";
-import CustomizedSlider from "../../../slider/Slider";
+import CustomizedSlider from "../../slider/Slider";
 import SelectToolBar from "./select_tool_bar/SelectToolBar";
-import { useStateContext } from "../../../../contexts/ContextProvider";
-import DatabaseApi from "../../../../APIs/DatabaseApi";
+import DatabaseApi from "../../../apis/DatabaseApi";
+import { userFiles } from "../../DataProcessing";
+import {
+  convertFilesToTabularFormat,
+  getUserFileId,
+} from "../../DataProcessing";
+
+const currentColor = "blue";
 
 const interactiveTools = [
   {
@@ -73,9 +79,14 @@ const interactiveTools = [
   },
 ];
 
+/**
+ * this is a tab which allows to filter different properties
+ * @param {*} props - this should contain
+ * { property, containerWidth, containerHeight }
+ * @returns ``<PropertyTab/>
+ */
 const PropertyTab = (props) => {
   const { property, containerWidth, containerHeight } = props;
-  const { currentColor, editableUserFiles, userFiles } = useStateContext();
   const [propertyValue, setPropertyValue] = useState(0);
   const [selectedTools, setSelectedTools] = useState([]);
   const [maxPropertyValue, setMaxPropertyValue] = useState(10);
@@ -94,31 +105,21 @@ const PropertyTab = (props) => {
         return toolID;
       })
     );
-
-    const plot = props.dashboardStructure[props.plotID];
-    // TODO: should this be passed down from parent component ?
-    const selectedFileID = userFiles.indexOf(
-      userFiles.filter((file) => file.filename === plot.filename)[0]
-    );
-    // TODO: please make a function to get this data from the column
-    // maybe this function can be in the UserFiles object which will be used for the data processing of userFiles data
-    const file = editableUserFiles[selectedFileID];
-    const selectedPropertyColumn = file.filter(
-      (column) => column[property] !== undefined
-    )[0];
-    setMaxPropertyValue(Math.max(...selectedPropertyColumn[property]));
-    setMinPropertyValue(Math.min(...selectedPropertyColumn[property]));
+    // this can come from the userFiles because it will be modified by th selected property
+    const tabularFiles =
+      convertFilesToTabularFormat(userFiles)[getUserFileId(property)];
+    setMaxPropertyValue(Math.max(...tabularFiles[property]));
+    setMinPropertyValue(Math.min(...tabularFiles[property]));
   };
 
   const handleFilterAbove = (e) => {
     setPropertyValue(e.target.value);
-    props.filterAbove(property, e.target.value, props.plotID);
+    props.filterAbove(property, e.target.value);
   };
 
   const handleFilterBelow = (e) => {
     setPropertyValue(e.target.value);
-    console.log(props);
-    props.filterBelow(property, e.target.value, props.plotID);
+    props.filterBelow(property, e.target.value);
   };
 
   return (

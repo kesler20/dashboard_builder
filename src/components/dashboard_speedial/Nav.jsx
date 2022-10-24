@@ -24,6 +24,7 @@ const actions = [
   { icon: <Save />, name: "Save Dashboard" },
   { icon: <Edit />, name: "Edit Dashboard" },
   { icon: <Add />, name: "Add Plot" },
+  { icon: <Add />, name: "Add Tools" },
 ];
 
 const Nav = ({ onNavBtnClicked }) => {

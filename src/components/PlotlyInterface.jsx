@@ -33,6 +33,10 @@ export default class PlotlyInterface {
     };
   }
 
+  buildPlotly() {
+    return this;
+  }
+
   // the trace removal function should keep the traceIDs as they are
   addTrace(type, name) {
     const traceBuilder = new TraceBuilder(type, name);

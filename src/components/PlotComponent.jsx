@@ -9,6 +9,7 @@ import PlotCommandLine from "./plot_command_line/PlotCommandLine";
  *  @see section on custom components from  https://github.com/react-grid-layout/react-grid-layout
  */
 const PlotComponent = forwardRef(({ style, className, ...props }, ref) => {
+
   return (
     // display the plot with the command line and the handle if the viewMode is edit, otherwise display the plot
     <div>
