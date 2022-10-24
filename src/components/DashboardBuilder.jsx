@@ -1,4 +1,3 @@
-
 export default class DashboardBuilder {
   /**
    * the plots (second argument) has the following structure:
@@ -40,8 +39,17 @@ export default class DashboardBuilder {
       plot: {},
       layout: {},
       dataGrid: { x: 4, y: 0, w: 4, h: 4 },
-      tools: { name : "tool" },
+      tools: { name: "tool" },
     });
+    return this;
+  }
+
+  importDashboardData(dashboardData) {
+    console.log(this)
+    Object.keys(dashboardData).forEach((k) => {
+      this[k] = dashboardData[k];
+    });
+    console.log(this)
     return this;
   }
 

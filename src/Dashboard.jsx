@@ -68,7 +68,7 @@ const Dashboard = () => {
   const [mode, setMode] = useState("edit");
   const [theme, setTheme] = useState(true);
   const [currentLayout, setCurrentLayout] = useState([]);
-
+  const [responsiveLayout, setResponsiveLayout] = useState(initialLayout);
   // data flow states
   // command line model
   const [commandLineData, setCommandLineData] = useState(
@@ -84,7 +84,25 @@ const Dashboard = () => {
   const [currentUserSelection, setCurrentUserSelection] = useState("");
 
   useEffect(() => {
-    setDashboardData(db.readResourceFromLocalStorage("dashboard"));
+    const dashBoardFromLocalStorage =
+      db.readResourceFromLocalStorage("dashboard");
+
+    console.log(dashBoardFromLocalStorage);
+    if (dashBoardFromLocalStorage.length === 0) {
+      console.log("no dashboard found in local storage");
+    } else {
+      setDashboardData(
+        initialDashboard.importDashboardData(dashBoardFromLocalStorage)
+      );
+
+      const initialResponsiveLayout = [];
+      initialDashboard.plots.forEach((plotMetadata) => {
+        initialResponsiveLayout.push(plotMetadata);
+      });
+
+      responsiveLayout.lg = initialResponsiveLayout;
+      responsiveLayout.md = initialResponsiveLayout;
+    }
   }, []);
 
   /**
@@ -135,7 +153,11 @@ const Dashboard = () => {
       setDashboardData(dashboardData.addTool());
     } else if (btnName === "Save Dashboard") {
       setMode("save");
-      db.saveResourceToLocalStorage("dashboard", dashboardData);
+      // load the data grid unto the dashboard
+      dashboardData.plots.forEach((plotMetadata, dataID) => {
+        plotMetadata.dataGrid = currentLayout[dataID];
+      });
+      db.createResourceInLocalStorage("dashboard", dashboardData);
     } else if (btnName === "Edit Dashboard") {
       setMode("edit");
     } else {
@@ -465,7 +487,7 @@ const Dashboard = () => {
           {/* grid layout */}
           <ResponsiveGridLayout
             className="layout"
-            layouts={initialLayout}
+            layouts={responsiveLayout}
             onLayoutChange={setCurrentLayout}
             breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
             cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
