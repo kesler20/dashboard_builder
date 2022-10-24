@@ -14,7 +14,9 @@ todos
 - decouple the creation of the plots
 - make sure that the other plots are updated adequately when they change with the right useEffects
 - rename the plots property to plotMetadata
-- make a them selector at the top#
+- make a them selector at the top
+- the dark mode of the interactivity tool panel is 
+not nice, make sre to include something line a theme selector and a filename selector
 - add new tools
 - add all the plots which plotly is capable of handling
 - rename things
